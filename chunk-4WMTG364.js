@@ -1,1 +1,0 @@
-import{Fa as s,Ga as a,Ia as n,ra as i}from"./chunk-WDJW3MQ2.js";var e=class o{static \u0275fac=function(t){return new(t||o)};static \u0275cmp=i({type:o,selectors:[["app-video-details"]],decls:2,vars:0,template:function(t,p){t&1&&(s(0,"p"),n(1,"video-details works!"),a())},encapsulation:2})};var f=[{path:"",component:e}];export{f as VIDEO_DETAILS_ROUTES};
