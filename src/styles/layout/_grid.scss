@@ -1,0 +1,9 @@
+.app-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  gap: var(--gutter);
+
+  @media (max-width: 959px) {
+    grid-template-columns: 1fr;
+  }
+}

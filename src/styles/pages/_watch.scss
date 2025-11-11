@@ -1,0 +1,9 @@
+.watch-page {
+  display:grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+
+  @media (max-width: 959px) {
+    grid-template-columns: 1fr;
+  }
+}

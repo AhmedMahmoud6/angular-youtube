@@ -1,0 +1,41 @@
+@use 'variables' as vars;
+
+@mixin breakpoint($size) {
+  $bp: map-get(vars.$breakpoints, $size);
+  @if $bp {
+    @media (min-width: $bp) { @content; }
+  } @else {
+    @warn "Unknown breakpoint `#{$size}`";
+  }
+}
+
+@mixin center-flex($gap: 0) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap;
+}
+
+@mixin card-initial-separator($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin card-initial-separator-normal($gap: 0) {
+  display: flex;
+  gap: $gap;
+}
+
+@mixin card-base {
+  background: var(--card-bg, #fff);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+@mixin aspect-ratio($w, $h) {
+  position: relative;
+  &::before { content: ""; display: block; padding-top: ($h / $w) * 100%; }
+  > * { position: absolute; inset: 0; }
+}

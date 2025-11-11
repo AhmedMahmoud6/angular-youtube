@@ -1,0 +1,8 @@
+.header {
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  padding: 12px calc(var(--gutter) / 2);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: var(--bg);
+}

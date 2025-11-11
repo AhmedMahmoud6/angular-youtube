@@ -1,0 +1,24 @@
+@use '../abstracts/variables' as vars;
+
+:root {
+  --bg: #{vars.$color-bg-dark};
+  --text: #{vars.$color-text-dark};
+  --icon-selected: #{vars.$color-icon-selected};
+  --primary: #{vars.$color-primary};
+  --muted: #{vars.$color-muted};
+  --text-desc: #{vars.$color-text-description};
+  --card-bg: #0f0f0f;
+  --gutter: #{vars.$gutter}px;
+  --radius: #{vars.$radius}px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+}

@@ -1,0 +1,14 @@
+.player {
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .stage { position: relative; background: #000; }
+
+  .controls {
+    position: absolute; left:0; right:0; bottom:0;
+    display:flex; gap:8px; padding:8px;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    button { background: transparent; border:none; color:#fff; }
+  }
+}

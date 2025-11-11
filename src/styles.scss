@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'styles/abstracts/variables' as vars;
+@use 'styles/abstracts/mixins' as mixins;
+@use 'styles/abstracts/functions' as funcs;
+@use 'styles/abstracts/placeholders' as placeholders;
+
+// Base
+@use 'styles/base/reset';
+@use 'styles/base/globals';
+@use 'styles/base/typography';
+@use 'styles/base/utilities';
+
+// Layout
+@use 'styles/layout/container';
+@use 'styles/layout/grid';
+@use 'styles/layout/header';
+@use 'styles/layout/sidebar';
+
+// Components
+@use 'styles/components/buttons';
+@use 'styles/components/cards';
+@use 'styles/components/video-card';
+@use 'styles/components/player';
+
+// Pages
+@use 'styles/pages/home';
+@use 'styles/pages/watch';

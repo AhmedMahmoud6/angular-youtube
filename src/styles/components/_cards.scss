@@ -1,0 +1,68 @@
+@use "../abstracts/mixins";
+.card {
+  @include mixins.card-base;
+  @include mixins.card-initial-separator(10px);
+  @include mixins.breakpoint(sm) {
+    font-size: 2.5vw !important;
+  }
+  @include mixins.breakpoint(md) {
+    font-size: 1.7vw !important;
+  }
+  @include mixins.breakpoint(lg) {
+    font-size: 1.3vw !important;
+  }
+  @include mixins.breakpoint(xl) {
+    font-size: 1vw !important;
+  }
+  padding: 12px;
+  background: var(--card-bg);
+
+
+  .video-img {
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+  }
+
+  .video-info {
+    display: flex;
+    gap: 20px;
+
+    img {
+      width: 40px;
+      max-width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+  }
+
+  .channel-title, .video-more-info {
+    color: var(--text-desc);
+  }
+
+  .video-more-info {
+    @include mixins.card-initial-separator-normal(5px);
+
+    span {
+      @include mixins.center-flex();
+    }
+
+    p, span {
+      @include mixins.breakpoint(sm) {
+        font-size: 2.2vw !important;
+      }
+      @include mixins.breakpoint(md) {
+        font-size: 1.4vw !important;
+      }
+      @include mixins.breakpoint(lg) {
+        font-size: 1.2vw !important;
+      }
+      @include mixins.breakpoint(xl) {
+        font-size: 0.8vw !important;
+      }
+    }
+  }
+}

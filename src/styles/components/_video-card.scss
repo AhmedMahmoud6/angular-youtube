@@ -1,0 +1,11 @@
+@use '../abstracts/mixins';
+
+.video-card {
+
+  @include mixins.card-base;
+  .thumb {
+    @include mixins.aspect-ratio(16,9); // uses mixin — ensure import where used
+    img { width:100%; height:100%; object-fit:cover; display:block; }
+  }
+  .meta { padding: 8px; .title { font-weight:600; } .channel { color: var(--muted); } }
+}

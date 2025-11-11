@@ -1,5 +1,5 @@
-<div class="video">
-  <div class="video-img" *ngIf="finalVideo()?.videoDetails?.snippet?.thumbnails?.high?.url as imgUrl">
+<div class="video card ">
+  <div class="video-img" *ngIf="finalVideo()?.videoDetails?.snippet?.thumbnails?.maxres?.url as imgUrl">
     <img [src]="imgUrl" [alt]="finalVideo()!.videoDetails.snippet?.title">
   </div>
 
@@ -14,12 +14,13 @@
       <div class="channel-title">{{finalVideo()?.videoDetails!.snippet.channelTitle}}</div>
       <div class="video-more-info">
         <p class="video-views">{{formatViews(finalVideo()?.videoDetails!.statistics.viewCount)}}</p>
+        <span>•</span>
         <p class="video-date">{{timeAgo(finalVideo()?.videoDetails!.snippet.publishedAt)}}</p>
       </div>
 
     </div>
 
-    <div class="right-side"></div>
+<!--    <div class="right-side"></div>-->
 
   </div>
 
