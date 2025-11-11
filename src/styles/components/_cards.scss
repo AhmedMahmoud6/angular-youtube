@@ -43,6 +43,12 @@
     color: var(--text-desc);
   }
 
+  .center {
+    .video-title {
+      font-weight: bold;
+    }
+  }
+
   .video-more-info {
     @include mixins.card-initial-separator-normal(5px);
 

@@ -27,6 +27,12 @@
   gap: $gap;
 }
 
+@mixin space-between() {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 @mixin card-base {
   background: var(--card-bg, #fff);
   border-radius: 8px;
