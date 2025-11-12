@@ -2,7 +2,7 @@ import {Component, effect, inject, input, InputSignal, OnInit, signal, WritableS
 import {FinalVideo, Video} from '../../../core/models/video';
 import {YoutubeService} from '../../../core/services/youtube.service';
 import {NgIf} from '@angular/common';
-import {formatViews, mergeVideoAndChannel, timeAgo} from '../../../core/utils/formatters';
+import {formatViews, formatYouTubeDuration, mergeVideoAndChannel, timeAgo} from '../../../core/utils/formatters';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 
 @Component({
@@ -24,6 +24,8 @@ export class VideoCard implements OnInit{
 
   // holds a SafeResourceUrl for iframe src when preview is active
   iframeSrc: WritableSignal<SafeResourceUrl | null> = signal(null);
+
+  timerId: any;
 
   // It’s used to mark dynamically created HTML, style, script, or URL values as safe, so Angular doesn’t block or strip them out for security reasons.
   private sanitizer = inject(DomSanitizer);
@@ -50,7 +52,10 @@ export class VideoCard implements OnInit{
 
   }
 
+
   showPreview() {
+    this.timerId = setTimeout(() => {
+
     const videoId = this.finalVideo()?.videoDetails?.id;
     if (!videoId) return;
     const params = new URLSearchParams({
@@ -72,12 +77,15 @@ export class VideoCard implements OnInit{
 
 
     console.log(videoId);
+    }, 300)
   }
 
   hidePreview() {
     // hide and remove the iframe src to stop playback and release memory
     this.previewVisible.set(false);
     this.iframeSrc.set(null);
+    clearTimeout(this.timerId);
   }
 
+  protected readonly formatYouTubeDuration = formatYouTubeDuration;
 }

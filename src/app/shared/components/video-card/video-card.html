@@ -5,6 +5,7 @@
        [style.opacity]="previewVisible() ? 0 : 1"
        [style.transition]="'opacity 0.28s ease'">
     <img [src]="imgUrl" [alt]="finalVideo()!.videoDetails.snippet?.title">
+    <p>{{formatYouTubeDuration(finalVideo()!.videoDetails.contentDetails.duration)}}</p>
   </div>
 
   <div class="video-preview" *ngIf="iframeSrc() as src">

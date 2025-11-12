@@ -27,10 +27,15 @@ export interface VideoSnippet {
   channelTitle: string;
 }
 
+export interface contentDetails {
+  duration: string;
+}
+
 export interface Video {
   id: string;
   snippet: VideoSnippet;
   statistics: VideoStatistics;
+  contentDetails: contentDetails;
 }
 
 export interface FinalVideo {
