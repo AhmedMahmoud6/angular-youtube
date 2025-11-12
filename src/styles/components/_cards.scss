@@ -17,6 +17,12 @@
   padding: 12px;
   background: var(--card-bg);
 
+  &:hover{
+    transition: .2s;
+    background-color: var(--card-hover);
+    cursor: pointer;
+  }
+
 
   .video-img {
     img {
@@ -70,5 +76,29 @@
         font-size: 0.8vw !important;
       }
     }
+  }
+}
+
+.video {
+  position: relative;
+
+  .video-media {
+    position: relative;
+    .video-preview {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
+
+    }
+
   }
 }

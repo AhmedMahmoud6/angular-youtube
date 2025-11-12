@@ -1,7 +1,27 @@
-<div class="video card ">
-  <div class="video-img" *ngIf="finalVideo()?.videoDetails?.snippet?.thumbnails?.maxres?.url as imgUrl">
+<div class="video card " (mouseenter)="showPreview()" (mouseleave)="hidePreview()" >
+
+  <div class="video-media">
+  <div class="video-img" *ngIf="finalVideo()?.videoDetails?.snippet?.thumbnails?.maxres?.url as imgUrl"
+       [style.opacity]="previewVisible() ? 0 : 1"
+       [style.transition]="'opacity 0.28s ease'">
     <img [src]="imgUrl" [alt]="finalVideo()!.videoDetails.snippet?.title">
   </div>
+
+  <div class="video-preview" *ngIf="iframeSrc() as src">
+    <iframe
+      [src]="src"
+      width="100%"
+      height="100%"
+      frameborder="0"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen
+
+    ></iframe>
+  </div>
+
+  </div>
+
+
 
   <div class="video-info">
 

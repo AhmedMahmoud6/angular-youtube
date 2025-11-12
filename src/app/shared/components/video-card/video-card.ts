@@ -1,8 +1,9 @@
-import {Component, effect, input, InputSignal, OnInit, signal} from '@angular/core';
+import {Component, effect, inject, input, InputSignal, OnInit, signal, WritableSignal} from '@angular/core';
 import {FinalVideo, Video} from '../../../core/models/video';
 import {YoutubeService} from '../../../core/services/youtube.service';
 import {NgIf} from '@angular/common';
 import {formatViews, mergeVideoAndChannel, timeAgo} from '../../../core/utils/formatters';
+import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-video-card',
@@ -17,6 +18,19 @@ export class VideoCard implements OnInit{
   video: InputSignal<Video | undefined> = input<Video>();
   channel = signal<Video[]>([])
   finalVideo = signal<FinalVideo | undefined>(undefined);
+
+  // signal controlling whether preview is visible
+  previewVisible: WritableSignal<boolean> = signal(false);
+
+  // holds a SafeResourceUrl for iframe src when preview is active
+  iframeSrc: WritableSignal<SafeResourceUrl | null> = signal(null);
+
+  // It’s used to mark dynamically created HTML, style, script, or URL values as safe, so Angular doesn’t block or strip them out for security reasons.
+  private sanitizer = inject(DomSanitizer);
+
+
+
+
 
   constructor(private youtubeService: YoutubeService) {
   }
@@ -34,6 +48,36 @@ export class VideoCard implements OnInit{
       })
     }
 
+  }
+
+  showPreview() {
+    const videoId = this.finalVideo()?.videoDetails?.id;
+    if (!videoId) return;
+    const params = new URLSearchParams({
+      autoplay: '1',
+      mute: '1',
+      controls: '0',
+      rel: '0',
+      modestbranding: '1',
+      playsinline: '1',
+      loop: '1',
+      playlist: videoId,
+    });
+
+    const url = `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+
+    // sanitize and set signals
+    this.iframeSrc.set(this.sanitizer.bypassSecurityTrustResourceUrl(url));
+    this.previewVisible.set(true);
+
+
+    console.log(videoId);
+  }
+
+  hidePreview() {
+    // hide and remove the iframe src to stop playback and release memory
+    this.previewVisible.set(false);
+    this.iframeSrc.set(null);
   }
 
 }
