@@ -1,8 +1,9 @@
-import {Component, effect, OnInit, signal} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
 import {Video} from '../../core/models/video';
 import {YoutubeService} from '../../core/services/youtube.service';
 import {VideoCard} from '../../shared/components/video-card/video-card';
 import {NgForOf} from '@angular/common';
+import {toSignal} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
@@ -14,26 +15,21 @@ import {NgForOf} from '@angular/common';
   styleUrl: './home.scss',
   standalone: true
 })
-export class Home implements OnInit{
-  videos = signal<Video[]>([]);
+export class Home {
 
-  constructor(private youtubeService: YoutubeService) {
+
+  private youtubeService = inject(YoutubeService);
+
+  private videos$ = this.youtubeService.getVideos();
+
+  private videosResponse = toSignal(this.videos$, {initialValue: null})
+
+  videos = computed<Video[]>(() => this.videosResponse()?.items ?? []);
+
+  constructor() {
     effect(() => {
       console.log(this.videos())
     });
   }
 
-
-
-  ngOnInit() {
-    const params = {
-      part: 'snippet,statistics,contentDetails',
-      chart: 'mostPopular',
-      regionCode: 'EG',
-      maxResults: 10
-    }
-
-    this.youtubeService.getVideos(params).subscribe(value => this.videos.set(value.items));
-
-  }
 }

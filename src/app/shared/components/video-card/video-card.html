@@ -1,4 +1,5 @@
-<div class="video card " (mouseenter)="showPreview()" (mouseleave)="hidePreview()" >
+<div class="video card " *ngIf="finalVideo()" (mouseenter)="showPreview()" (mouseleave)="hidePreview()"
+ [routerLink]="['/video', finalVideo()!.videoDetails.id]">
 
   <div class="video-media">
   <div class="video-img" *ngIf="finalVideo()?.videoDetails?.snippet?.thumbnails?.maxres?.url as imgUrl"

@@ -1,1 +1,45 @@
-<p>video-details works!</p>
+<div class="current-video" *ngIf="video() as v">
+<!--  <p>video title is {{v.snippet.title}}</p>-->
+  <youtube-player
+    #ytPlayer
+    [videoId]="v.videoDetails.id"
+    [playerVars]="{ autoplay: 1, controls: 1, modestbranding: 1 }"
+    suggestedQuality="hd720"
+    autofocus
+  >
+  </youtube-player>
+</div>
+
+<div class="video-details" *ngIf="video() as v">
+
+  <div class="video-info">
+    <h1>{{v.videoDetails.snippet.title}}</h1>
+
+    <div class="channel-details">
+      <div class="channel-left-side">
+
+        <div class="channel-pfp">
+          <img [src]="v.channelProfilePic" alt="channel pfp">
+        </div>
+
+        <div class="channel-title-parent">
+          <h2>{{v.videoDetails.snippet.channelTitle}}</h2>
+          <p>{{formatSubscribers(v.videoDetails.statistics.subscriberCount)}}</p>
+        </div>
+
+        <div class="channel-sub-parent">
+          <button class="btn btn-dark">Join</button>
+          <button class="btn btn-light">Subscribe</button>
+        </div>
+
+      </div>
+      <div class="channel-right-side"></div>
+
+    </div>
+  </div>
+
+  <div class="recommendations">
+
+  </div>
+
+</div>

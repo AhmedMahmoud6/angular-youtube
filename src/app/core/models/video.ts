@@ -16,6 +16,7 @@ export interface VideoStatistics {
   viewCount: string;
   likeCount: string;
   commentCount: string;
+  subscriberCount?: string;
 }
 
 export interface VideoSnippet {
@@ -31,15 +32,23 @@ export interface contentDetails {
   duration: string;
 }
 
+export interface brandingSettings {
+  image?: {
+    bannerExternalUrl: string;
+  }
+}
+
 export interface Video {
   id: string;
   snippet: VideoSnippet;
   statistics: VideoStatistics;
   contentDetails: contentDetails;
+  brandingSettings: brandingSettings;
 }
 
 export interface FinalVideo {
   videoDetails: Video;
   channelId: string;
   channelProfilePic: string;
+
 }

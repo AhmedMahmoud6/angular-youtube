@@ -3,10 +3,12 @@
 :root {
   --bg: #{vars.$color-bg-dark};
   --text: #{vars.$color-text-dark};
+  --text-desc: #{vars.$color-text-description};
+  --text-black: #{vars.$color-bg-dark};
   --icon-selected: #{vars.$color-icon-selected};
+  --button-light-hover: #e4e4e4;
   --primary: #{vars.$color-primary};
   --muted: #{vars.$color-muted};
-  --text-desc: #{vars.$color-text-description};
   --outline: #{vars.$color-outline};
   --icons-bg: #{vars.$color-bg-icons};
   --icons-bg-hover: #{vars.$color-bg-icons-hover};

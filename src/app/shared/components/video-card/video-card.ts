@@ -4,11 +4,13 @@ import {YoutubeService} from '../../../core/services/youtube.service';
 import {NgIf} from '@angular/common';
 import {formatViews, formatYouTubeDuration, mergeVideoAndChannel, timeAgo} from '../../../core/utils/formatters';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-video-card',
   imports: [
-    NgIf
+    NgIf,
+    RouterLink
   ],
   templateUrl: './video-card.html',
   styleUrl: './video-card.scss',
@@ -38,6 +40,7 @@ export class VideoCard implements OnInit{
   }
   protected readonly formatViews: (views: (string | number)) => string = formatViews;
   protected readonly timeAgo: (dateString: string) => string = timeAgo;
+  protected readonly formatYouTubeDuration = formatYouTubeDuration;
 
   ngOnInit() {
     const video = this.video();
@@ -76,7 +79,6 @@ export class VideoCard implements OnInit{
     this.previewVisible.set(true);
 
 
-    console.log(videoId);
     }, 300)
   }
 
@@ -87,5 +89,6 @@ export class VideoCard implements OnInit{
     clearTimeout(this.timerId);
   }
 
-  protected readonly formatYouTubeDuration = formatYouTubeDuration;
+
+
 }

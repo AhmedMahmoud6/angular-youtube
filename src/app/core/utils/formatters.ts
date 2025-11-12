@@ -51,6 +51,7 @@ export function mergeVideoAndChannel(video: Video, channel: Video[]): FinalVideo
         viewCount: video.statistics.viewCount,
         commentCount: video.statistics.commentCount,
         likeCount: video.statistics.likeCount,
+        subscriberCount: currentChannel.statistics.subscriberCount,
       },
       snippet: {
         thumbnails: video.snippet.thumbnails,
@@ -61,9 +62,16 @@ export function mergeVideoAndChannel(video: Video, channel: Video[]): FinalVideo
         description: video.snippet.description
       },
       id: video.id,
+      brandingSettings: {
+        image: {
+          bannerExternalUrl: currentChannel.brandingSettings.image?.bannerExternalUrl ?? '',
+        }
+      },
     },
     channelId: currentChannel.id,
-    channelProfilePic: currentChannel.snippet.thumbnails.default?.url ?? ''!
+    channelProfilePic: currentChannel.snippet.thumbnails.default?.url ?? ''!,
+
+
   }
 
 }
@@ -84,3 +92,26 @@ export function formatYouTubeDuration(duration: string): string {
 
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
+
+export function formatSubscribers(subCount?: string | number): string {
+  if (subCount === undefined || subCount === null) {
+    return 'N/A subscribers'; // or '0 subscribers'
+  }
+
+  const num = typeof subCount === 'string' ? parseInt(subCount) : subCount;
+
+  if (isNaN(num) || num < 0) {
+    return '0 subscribers';
+  }
+
+  if (num >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B subscribers';
+  } else if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M subscribers';
+  } else if (num >= 1_000) {
+    return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K subscribers';
+  } else {
+    return num + ' subscribers';
+  }
+}
+
