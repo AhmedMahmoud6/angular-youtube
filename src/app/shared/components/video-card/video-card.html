@@ -2,12 +2,19 @@
  [routerLink]="['/video', finalVideo()!.videoDetails.id]">
 
   <div class="video-media">
-  <div class="video-img" *ngIf="finalVideo()?.videoDetails?.snippet?.thumbnails?.maxres?.url as imgUrl"
+  <div class="video-img" *ngIf="finalVideo()?.videoDetails?.snippet?.thumbnails?.maxres?.url as imgUrl; else fallbackImg"
        [style.opacity]="previewVisible() ? 0 : 1"
        [style.transition]="'opacity 0.28s ease'">
     <img [src]="imgUrl" [alt]="finalVideo()!.videoDetails.snippet?.title">
     <p>{{formatYouTubeDuration(finalVideo()!.videoDetails.contentDetails.duration)}}</p>
   </div>
+
+    <ng-template #fallbackImg>
+      <div class="video-img">
+        <img [src]="finalVideo()?.videoDetails?.snippet?.thumbnails?.high?.url"
+             [alt]="finalVideo()?.videoDetails?.snippet?.title">
+      </div>
+    </ng-template>
 
   <div class="video-preview" *ngIf="iframeSrc() as src">
     <iframe

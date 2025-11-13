@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {Video} from '../models/video';
 import { Observable } from "rxjs";
 
@@ -16,7 +16,7 @@ export class YoutubeService {
     part: 'snippet,statistics,contentDetails',
     chart: 'mostPopular',
     regionCode: 'EG',
-    maxResults: '10',
+    maxResults: '20',
   }
 
   private videoParams = {
@@ -27,8 +27,14 @@ export class YoutubeService {
 
   }
 
-  getVideos(): Observable<{ items: Video[] }> {
-    return this.http.get<{items: Video[]}>(`${this.apiUrl}/videos?key=${this.apiKey}`, { params: this.params })
+  getVideos(pageToken?: string): Observable<{ items: Video[]; nextPageToken?: string }> {
+    const paramObj : Record<string, string> = {
+      ...this.params,
+      ...(pageToken ? {pageToken} : {}),
+    }
+    const params = new HttpParams({ fromObject: paramObj });
+
+    return this.http.get<{items: Video[]; nextPageToken: string}>(`${this.apiUrl}/videos?key=${this.apiKey}`, { params: params })
   }
 
   getVideoById(videoId: string | null): Observable<{ items: Video[] }> {

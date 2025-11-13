@@ -21,6 +21,8 @@ export class VideoCard implements OnInit{
   channel = signal<Video[]>([])
   finalVideo = signal<FinalVideo | undefined>(undefined);
 
+
+
   // signal controlling whether preview is visible
   previewVisible: WritableSignal<boolean> = signal(false);
 
@@ -43,6 +45,7 @@ export class VideoCard implements OnInit{
   protected readonly formatYouTubeDuration = formatYouTubeDuration;
 
   ngOnInit() {
+
     const video = this.video();
     if (video?.snippet.channelId) {
       this.youtubeService.getChannel(video.snippet.channelId).subscribe(value => {
