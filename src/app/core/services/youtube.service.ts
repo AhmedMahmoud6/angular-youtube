@@ -1,8 +1,8 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Video} from '../models/video';
-import { Observable } from "rxjs";
+import {Comments, Video} from '../models/video';
+import {Observable, throwError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +43,23 @@ export class YoutubeService {
 
   getChannel(channelId: string | undefined): Observable<{ items: Video[] }> {
     return this.http.get<{ items: Video[] }>(`${this.channelUrl}?key=${this.apiKey}&id=${channelId}&part=brandingSettings`, {params: this.videoParams})
+  }
+
+  getVideoComments(videoId: string, pageToken?: string): Observable<{ items: Comments[]; nextPageToken: string }> {
+    if (!videoId) {
+      console.error('getVideoComments called without videoId!');
+      return throwError(() => new Error('videoId is required'));
+    }
+
+    const paramObj : Record<string, string> = {
+      part: "snippet,replies",
+      order: "relevance",
+      ...(pageToken ? {pageToken} : {}),
+      videoId,
+    }
+    const params = new HttpParams({ fromObject: paramObj });
+
+    return this.http.get<{items: Comments[]; nextPageToken: string}>(`${this.apiUrl}/commentThreads?key=${this.apiKey}`, { params: params })
+
   }
 }

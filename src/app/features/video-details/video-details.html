@@ -33,13 +33,86 @@
         </div>
 
       </div>
-      <div class="channel-right-side"></div>
+      <div class="channel-right-side">
+        <div class="like-container ">
+          <div class="likes btn btn-dark">
+            <fa-icon [icon]="faThumbsUp"></fa-icon>
+            <p>{{formatViews(v.videoDetails.statistics.likeCount,
+              ``)}}</p>
+          </div>
+
+          <div class="dislikes btn btn-dark">
+            <fa-icon [icon]="faThumbsDown"></fa-icon>
+          </div>
+        </div>
+        <div class="share-container btn btn-dark">
+          <fa-icon [icon]="faShare"></fa-icon>
+          <p>Share</p>
+        </div>
+
+        <div class="download-container btn btn-dark">
+          <fa-icon [icon]="faDownload"></fa-icon>
+          <p>Download</p>
+        </div>
+
+
+      </div>
 
     </div>
+
+    <div class="video-views-container btn btn-dark">
+      <p>{{formatViews(v.videoDetails.statistics.viewCount)}}</p>
+      <span>•</span>
+      <p>{{timeAgo(v.videoDetails.snippet.publishedAt)}}</p>
+    </div>
+
+    <div class="video-comments-container">
+      <h2>{{ comments().length }} Comments</h2>
+
+      <ul class="comments-list" *ngIf="comments()">
+        <li *ngFor="let c of comments()">
+          <div class="comment-left-side">
+            <img [src]="c.snippet.topLevelComment.snippet.authorProfileImageUrl" referrerpolicy="no-referrer" alt="User pfp">
+          </div>
+
+
+          <div class="comment-right-side">
+            <div class="comment-author">
+              <p>{{ c.snippet.topLevelComment.snippet.authorDisplayName }}</p>
+              <p class="comment-time">{{timeAgo(c.snippet.topLevelComment.snippet.publishedAt)}}</p>
+            </div>
+            <div class="comment-text" >
+              {{c.snippet.topLevelComment.snippet.textOriginal}}
+            </div>
+
+            <div class="comment-like-section">
+              <div class="comment-likes">
+                <fa-icon class="circle-invisible" [icon]="faThumbsUp"></fa-icon>
+                <p>{{formatViews(c.snippet.topLevelComment.snippet.likeCount, "")}}</p>
+              </div>
+              <div class="comment-dislikes">
+                <fa-icon class="circle-invisible" [icon]="faThumbsDown"></fa-icon>
+              </div>
+            </div>
+
+            <div class="comment-reply-button reply-btn">
+              <fa-icon [icon]="faChevronDown"></fa-icon>
+              <p> {{c.snippet.totalReplyCount}} replies</p>
+            </div>
+
+
+          </div>
+        </li>
+      </ul>
+
+      <!-- <--- tiny sentinel AFTER the list (this is the important bit) -->
+      <div #commentsSection class="comments-sentinel" aria-hidden="true"></div>
+    </div>
+
   </div>
 
   <div class="recommendations">
-
+    hello
   </div>
 
 </div>

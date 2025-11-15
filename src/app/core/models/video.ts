@@ -46,9 +46,34 @@ export interface Video {
   brandingSettings: brandingSettings;
 }
 
+
 export interface FinalVideo {
   videoDetails: Video;
   channelId: string;
   channelProfilePic: string;
 
+}
+
+export interface SingleComment {
+  snippet: {
+    textOriginal: string;
+    authorDisplayName: string;
+    authorProfileImageUrl: string;
+    authorChannelId: {value: string};
+    likeCount: number;
+    publishedAt: string;
+  }
+  commentId: string;
+}
+
+export interface Comments {
+  nextPageToken: string;
+
+    snippet: {
+      topLevelComment: SingleComment;
+      totalReplyCount: number;
+    replies: {
+      comments: SingleComment;
+    }
+  }
 }

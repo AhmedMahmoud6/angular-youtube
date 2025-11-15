@@ -4,38 +4,99 @@ import {
   computed,
   effect,
   ElementRef,
-  inject,
+  inject, NgZone, OnDestroy,
   OnInit,
   signal,
   Signal,
-  ViewChild
+  ViewChild, WritableSignal
 } from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {YoutubeService} from '../../core/services/youtube.service';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-import {FinalVideo, Video} from '../../core/models/video';
-import {NgIf} from '@angular/common';
+import {Comments, FinalVideo, Video} from '../../core/models/video';
+import {NgForOf, NgIf} from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
-import {formatSubscribers, mergeVideoAndChannel} from '../../core/utils/formatters';
+import {formatSubscribers, formatViews, mergeVideoAndChannel, timeAgo} from '../../core/utils/formatters';
+import { faThumbsUp, faThumbsDown, faShare, faDownload, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {loadMore, setupObserver} from '../../core/utils/service.functions';
 
 
 @Component({
   selector: 'app-video-details',
   imports: [
     NgIf,
-    YouTubePlayerModule
+    YouTubePlayerModule,
+    FaIconComponent,
+    NgForOf
   ],
   templateUrl: './video-details.html',
   styleUrl: './video-details.scss',
   standalone: true,
 })
-export class VideoDetails {
+export class VideoDetails implements AfterViewInit, OnDestroy{
+  faThumbsUp = faThumbsUp;
+  faThumbsDown = faThumbsDown;
+  faShare = faShare;
+  faDownload = faDownload;
+  faChevronDown = faChevronDown;
+  faChevronUp = faChevronUp;
+
+  protected readonly formatSubscribers = formatSubscribers;
+  protected readonly formatViews = formatViews;
+  protected readonly timeAgo = timeAgo;
+
+
   private route: ActivatedRoute = inject(ActivatedRoute);
   private youtube: YoutubeService = inject(YoutubeService);
-  @ViewChild('ytPlayer', { read: ElementRef }) ytPlayerEl?: ElementRef<HTMLDivElement>;
+  private ngZone: NgZone = inject(NgZone);
 
+  comments: WritableSignal<Comments[]> = signal<Comments[]>([]);
+  nextPageToken: WritableSignal<string | null | undefined> = signal<string | null | undefined>(undefined);
+  isLoading: WritableSignal<boolean> = signal(false);
+  error: WritableSignal<string | null> = signal<string | null>(null);
+
+
+  private observer?: IntersectionObserver;
+  private setupDone: WritableSignal<boolean> = signal(false);
+
+  @ViewChild('ytPlayer', { read: ElementRef }) ytPlayerEl?: ElementRef<HTMLDivElement>;
+  private commentsSection?: ElementRef<HTMLElement>;
+
+  @ViewChild('commentsSection', {read: ElementRef})
+  set commentsSectionRef(el: ElementRef<HTMLElement> | undefined) {
+    this.commentsSection = el;
+
+    const v = this.video();
+    if (!this.setupDone() && el && v) {
+      this.setupDone.set(true);
+
+      const vid = v.videoDetails?.id;
+      if (!vid) {
+        console.warn('No video id available when initializing comments observer');
+        return;
+      }
+      this.observer = setupObserver(
+        this.commentsSection,
+        this.ngZone,
+        this.isLoading,
+        this.nextPageToken,
+        this.youtube,
+        'comments',
+        this.error,
+        undefined,
+        this.comments,
+        vid
+      );
+
+
+
+    }
+  }
+
+  // private currVideoId: string | null | undefined = this.route.snapshot.paramMap.get('id');
 
   private finalVideo$ = this.route.paramMap.pipe(
     map(pm => pm.get('id')),
@@ -50,8 +111,20 @@ export class VideoDetails {
     })
   );
 
+
   video: Signal<null | FinalVideo> = toSignal(this.finalVideo$, { initialValue: null})
 
+  ngAfterViewInit() {
+  }
 
-  protected readonly formatSubscribers = formatSubscribers;
+  ngOnDestroy() {
+    this.observer?.disconnect();
+  }
+
+
+  constructor() {
+    effect(() => {
+        console.log(this.comments());
+    });
+  }
 }

@@ -10,14 +10,14 @@
 
 .current-video {
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 75vh;
 
   youtube-player {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 100%;
     height: 75vh;
 
     youtube-player-placeholder {
@@ -37,21 +37,35 @@
 
 .video-details {
   padding: 20px 50px;
+  display: flex;
+  width: 100%;
 
   .video-info {
+    flex: 2;
     h1 {
       font-size: 22px;
     }
     .channel-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-top: 10px;
+
+      @media (max-width: 1420px) {
+        flex-direction: column;
+        align-items: start;
+      }
       .channel-left-side {
         display: flex;
         align-items: center;
         gap: 20px;
 
+
         .channel-pfp {
           width: 50px;
+          max-width: 50px;
           height: 50px;
+          flex-shrink: 0;
           img {
             width: 100%;
             height: 100%;
@@ -80,6 +94,124 @@
 
 
       }
+
+
+      .channel-right-side {
+        display: flex;
+        gap: 10px;
+
+        @media (max-width: 1420px) {
+          margin-top: 20px;
+        }
+
+        fa-icon {
+          font-size: 22px;
+        }
+        .like-container {
+          display: flex;
+          gap: 10px;
+
+          .likes {
+            display: flex;
+            gap: 10px;
+
+          }
+
+          .dislikes {
+
+          }
+        }
+      }
     }
+
+    .video-views-container {
+      margin-top: 10px;
+      gap: 15px;
+
+    }
+    .video-comments-container {
+
+      width: 100%;
+      margin-top: 20px;
+
+      .comments-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+          display: flex;
+          gap: 20px;
+          margin: 30px 0;
+
+          .comment-left-side {
+
+            img {
+              border-radius: 50%;
+              width: 48px;
+              max-width: 48px;
+              height: 48px;
+              flex-shrink: 0;
+            }
+          }
+
+          .comment-right-side {
+            display: flex;
+            flex-direction: column;
+
+            .comment-author {
+              display: flex;
+              gap: 10px;
+              font-weight: 500;
+
+              .comment-time {
+                color: var(--text-desc);
+              }
+            }
+
+            .comment-text {
+              font-size: 18px;
+            }
+
+            .comment-like-section {
+              display: flex;
+              gap: 20px;
+              margin: 5px 0;
+              .comment-likes {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                p {
+                  color: var(--text-desc);
+                }
+              }
+            }
+
+
+            .comment-reply-button {
+              display: flex;
+              gap: 10px;
+              font-weight: 600;
+            }
+          }
+
+        }
+
+      }
+      .comments-sentinel {
+        margin-top: 200px;
+        height: 1px;
+        width: 100%;
+        display: block;
+      }
+
+
+      }
+  }
+
+  .recommendations {
+    flex: 1;
+
   }
 }
+

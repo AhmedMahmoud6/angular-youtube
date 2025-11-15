@@ -24,17 +24,17 @@ export function timeAgo(dateString: string): string {
   return 'just now';
 }
 
-export function formatViews(views: string | number): string {
+export function formatViews(views: string | number, msg: string = "views"): string {
   const num = typeof views === 'string' ? parseInt(views) : views;
 
   if (num >= 1_000_000_000) {
-    return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B views';
+    return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + `B ${msg}`;
   } else if (num >= 1_000_000) {
-    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M views';
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + `M ${msg}`;
   } else if (num >= 1_000) {
-    return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K views';
+    return (num / 1_000).toFixed(1).replace(/\.0$/, '') + `K ${msg}`;
   } else {
-    return num + ' views';
+    return num + ` ${msg}`;
   }
 }
 
