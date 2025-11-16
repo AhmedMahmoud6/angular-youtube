@@ -1,0 +1,26 @@
+<div class="reply" *ngIf="reply() as r">
+  <div class="comment-left-side">
+    <img [src]="r.snippet.authorProfileImageUrl" referrerpolicy="no-referrer" alt="User pfp">
+  </div>
+
+
+  <div class="comment-right-side">
+    <div class="comment-author">
+      <p>{{ r.snippet.authorDisplayName }}</p>
+      <p class="comment-time">{{timeAgo(r.snippet.publishedAt)}}</p>
+    </div>
+    <div class="comment-text" [innerHTML]="r.snippet.textOriginal">
+
+    </div>
+
+    <div class="comment-like-section">
+      <div class="comment-likes">
+        <fa-icon class="circle-invisible" [icon]="faThumbsUp"></fa-icon>
+        <p>{{formatViews(r.snippet.likeCount, "")}}</p>
+      </div>
+      <div class="comment-dislikes">
+        <fa-icon class="circle-invisible" [icon]="faThumbsDown"></fa-icon>
+      </div>
+    </div>
+  </div>
+</div>

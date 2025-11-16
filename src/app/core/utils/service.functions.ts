@@ -1,5 +1,5 @@
 import {ElementRef, NgZone, WritableSignal} from '@angular/core';
-import {Comments, Video} from '../models/video';
+import {Comments, Replies, SingleComment, Video} from '../models/video';
 import {take} from 'rxjs';
 import {YoutubeService} from '../services/youtube.service';
 
@@ -14,6 +14,7 @@ export function loadMore(
   videos? : WritableSignal<Video[]>,
   comments? : WritableSignal<Comments[]>,
   videoId? : string,
+  repliesCache? : WritableSignal<Map<string, SingleComment[]>>,
 
 
 ) {
@@ -69,6 +70,16 @@ export function loadMore(
         const newItems = res.items ?? [];
         comments?.set([...comments!(), ...newItems]);
 
+        if (comments) {
+          const map = new Map();
+          comments().forEach(com => {
+            map.set(com.snippet.topLevelComment.id, com.replies.comments);
+          })
+
+          repliesCache?.set(map);
+
+        }
+
         nextPageToken.set(res.nextPageToken ?? null);
 
 
@@ -99,7 +110,9 @@ export function setupObserver(
   videos? : WritableSignal<Video[]>,
   comments? : WritableSignal<Comments[]>,
   videoId? : string,
-  ) {
+  repliesCache? : WritableSignal<Map<string, SingleComment[]>>,
+
+) {
   if (!sentinel?.nativeElement) {
     console.warn('setupObserver: sentinel not available yet');
     return undefined;
@@ -120,7 +133,7 @@ export function setupObserver(
   observer = new IntersectionObserver(entries => {
     for(let entry of entries) {
       if (entry.isIntersecting) {
-        ngZone.run(() => loadMore(isLoading, nextPageToken, youtubeService, observer, loadWhat ,error, videos,comments,videoId));
+        ngZone.run(() => loadMore(isLoading, nextPageToken, youtubeService, observer, loadWhat ,error, videos,comments,videoId,repliesCache));
       }
     }
   },options);

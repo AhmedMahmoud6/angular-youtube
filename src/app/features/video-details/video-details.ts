@@ -15,13 +15,14 @@ import {YoutubeService} from '../../core/services/youtube.service';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-import {Comments, FinalVideo, Video} from '../../core/models/video';
+import {Comments, FinalVideo, Replies, SingleComment, Video} from '../../core/models/video';
 import {NgForOf, NgIf} from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import {formatSubscribers, formatViews, mergeVideoAndChannel, timeAgo} from '../../core/utils/formatters';
 import { faThumbsUp, faThumbsDown, faShare, faDownload, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {loadMore, setupObserver} from '../../core/utils/service.functions';
+import {Comment} from '../../shared/components/comment/comment';
 
 
 @Component({
@@ -30,7 +31,7 @@ import {loadMore, setupObserver} from '../../core/utils/service.functions';
     NgIf,
     YouTubePlayerModule,
     FaIconComponent,
-    NgForOf
+    Comment
   ],
   templateUrl: './video-details.html',
   styleUrl: './video-details.scss',
@@ -62,6 +63,9 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
   private observer?: IntersectionObserver;
   private setupDone: WritableSignal<boolean> = signal(false);
 
+  // private localComments: Signal<Comments[]> = computed<Comments[]>(() => this.comments())
+  protected repliesCache: WritableSignal<Map<string, SingleComment[]>> = signal(new Map<string, SingleComment[]>())
+
   @ViewChild('ytPlayer', { read: ElementRef }) ytPlayerEl?: ElementRef<HTMLDivElement>;
   private commentsSection?: ElementRef<HTMLElement>;
 
@@ -88,8 +92,11 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
         this.error,
         undefined,
         this.comments,
-        vid
+        vid,
+        this.repliesCache
       );
+
+
 
 
 
@@ -122,9 +129,12 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
   }
 
 
+
+
   constructor() {
     effect(() => {
-        console.log(this.comments());
+        // console.log(this.comments());
+        // console.log(this.repliesCache());
     });
   }
 }

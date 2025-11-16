@@ -66,48 +66,66 @@
       <p>{{timeAgo(v.videoDetails.snippet.publishedAt)}}</p>
     </div>
 
-    <div class="video-comments-container">
-      <h2>{{ comments().length }} Comments</h2>
-
-      <ul class="comments-list" *ngIf="comments()">
-        <li *ngFor="let c of comments()">
-          <div class="comment-left-side">
-            <img [src]="c.snippet.topLevelComment.snippet.authorProfileImageUrl" referrerpolicy="no-referrer" alt="User pfp">
-          </div>
-
-
-          <div class="comment-right-side">
-            <div class="comment-author">
-              <p>{{ c.snippet.topLevelComment.snippet.authorDisplayName }}</p>
-              <p class="comment-time">{{timeAgo(c.snippet.topLevelComment.snippet.publishedAt)}}</p>
-            </div>
-            <div class="comment-text" >
-              {{c.snippet.topLevelComment.snippet.textOriginal}}
-            </div>
-
-            <div class="comment-like-section">
-              <div class="comment-likes">
-                <fa-icon class="circle-invisible" [icon]="faThumbsUp"></fa-icon>
-                <p>{{formatViews(c.snippet.topLevelComment.snippet.likeCount, "")}}</p>
-              </div>
-              <div class="comment-dislikes">
-                <fa-icon class="circle-invisible" [icon]="faThumbsDown"></fa-icon>
-              </div>
-            </div>
-
-            <div class="comment-reply-button reply-btn">
-              <fa-icon [icon]="faChevronDown"></fa-icon>
-              <p> {{c.snippet.totalReplyCount}} replies</p>
-            </div>
+    <ng-container *ngIf="comments() else noComments">
+      <div class="video-comments-container">
+        <h2>{{ video()!.videoDetails.statistics.commentCount }} Comments</h2>
+        <app-comment [comments]="comments()" [repliesCache]="repliesCache()"></app-comment>
+<!--        <ul class="comments-list">-->
+<!--          <li *ngFor="let c of comments()">-->
+<!--            <div class="comment-left-side">-->
+<!--              <img [src]="c.snippet.topLevelComment.snippet.authorProfileImageUrl" referrerpolicy="no-referrer" alt="User pfp">-->
+<!--            </div>-->
 
 
-          </div>
-        </li>
-      </ul>
+<!--            <div class="comment-right-side">-->
+<!--              <div class="comment-author">-->
+<!--                <p>{{ c.snippet.topLevelComment.snippet.authorDisplayName }}</p>-->
+<!--                <p class="comment-time">{{timeAgo(c.snippet.topLevelComment.snippet.publishedAt)}}</p>-->
+<!--              </div>-->
+<!--              <div class="comment-text" [innerHTML]="c.snippet.topLevelComment.snippet.textOriginal">-->
 
-      <!-- <--- tiny sentinel AFTER the list (this is the important bit) -->
-      <div #commentsSection class="comments-sentinel" aria-hidden="true"></div>
-    </div>
+<!--              </div>-->
+
+<!--              <div class="comment-like-section">-->
+<!--                <div class="comment-likes">-->
+<!--                  <fa-icon class="circle-invisible" [icon]="faThumbsUp"></fa-icon>-->
+<!--                  <p>{{formatViews(c.snippet.topLevelComment.snippet.likeCount, "")}}</p>-->
+<!--                </div>-->
+<!--                <div class="comment-dislikes">-->
+<!--                  <fa-icon class="circle-invisible" [icon]="faThumbsDown"></fa-icon>-->
+<!--                </div>-->
+<!--              </div>-->
+
+
+<!--              <div class="comment-reply-section">-->
+<!--                <div class="comment-reply-button reply-btn" *ngIf="c.snippet.totalReplyCount > 0" (click)="toggleReplies(c.snippet.topLevelComment.id)">-->
+<!--                  <fa-icon [icon]="faChevronDown"></fa-icon>-->
+<!--                  <p> {{c.snippet.totalReplyCount}} replies</p>-->
+<!--                </div>-->
+
+<!--                <div class="comment-replies-container" *ngIf="expanded().has(c.snippet.topLevelComment.id)">-->
+<!--                  <div class="comment-replies" *ngFor="let rep of repliesCache().get(c.snippet.topLevelComment.id)">-->
+<!--&lt;!&ndash;                    {{rep.comments.snippet.}}&ndash;&gt;-->
+<!--                  </div>-->
+<!--                </div>-->
+
+<!--              </div>-->
+
+
+
+
+<!--            </div>-->
+<!--          </li>-->
+<!--        </ul>-->
+
+        <!-- <--- tiny sentinel AFTER the list (this is the important bit) -->
+        <div #commentsSection class="comments-sentinel" aria-hidden="true"></div>
+      </div>
+    </ng-container>
+
+    <ng-template #noComments>
+      <h1>No Comments</h1>
+    </ng-template>
 
   </div>
 

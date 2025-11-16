@@ -1,0 +1,48 @@
+<ul class="comments-list">
+  <li *ngFor="let c of comments()">
+    <div class="comment-left-side">
+      <img [src]="c.snippet.topLevelComment.snippet.authorProfileImageUrl" referrerpolicy="no-referrer" alt="User pfp">
+    </div>
+
+
+    <div class="comment-right-side">
+      <div class="comment-author">
+        <p>{{ c.snippet.topLevelComment.snippet.authorDisplayName }}</p>
+        <p class="comment-time">{{timeAgo(c.snippet.topLevelComment.snippet.publishedAt)}}</p>
+      </div>
+      <div class="comment-text" [innerHTML]="c.snippet.topLevelComment.snippet.textOriginal">
+
+      </div>
+
+      <div class="comment-like-section">
+        <div class="comment-likes">
+          <fa-icon class="circle-invisible" [icon]="faThumbsUp"></fa-icon>
+          <p>{{formatViews(c.snippet.topLevelComment.snippet.likeCount, "")}}</p>
+        </div>
+        <div class="comment-dislikes">
+          <fa-icon class="circle-invisible" [icon]="faThumbsDown"></fa-icon>
+        </div>
+      </div>
+
+
+      <div class="comment-reply-section">
+        <div class="comment-reply-button reply-btn" *ngIf="c.snippet.totalReplyCount > 0" (click)="toggleReplies(c.snippet.topLevelComment.id)">
+          <fa-icon [icon]="faChevronDown" *ngIf="!expanded().has(c.snippet.topLevelComment.id)"></fa-icon>
+          <fa-icon [icon]="faChevronUp" *ngIf="expanded().has(c.snippet.topLevelComment.id)"></fa-icon>
+          <p> {{c.snippet.totalReplyCount}} replies</p>
+        </div>
+
+        <div class="comment-replies-container" *ngIf="expanded().has(c.snippet.topLevelComment.id)">
+          <div class="comment-replies" *ngFor="let rep of repliesCache().get(c.snippet.topLevelComment.id)">
+            <app-reply [reply]="rep"></app-reply>
+          </div>
+        </div>
+
+      </div>
+
+
+
+
+    </div>
+  </li>
+</ul>

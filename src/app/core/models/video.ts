@@ -63,7 +63,11 @@ export interface SingleComment {
     likeCount: number;
     publishedAt: string;
   }
-  commentId: string;
+  id: string;
+}
+
+export interface Replies {
+  comments: SingleComment;
 }
 
 export interface Comments {
@@ -72,8 +76,6 @@ export interface Comments {
     snippet: {
       topLevelComment: SingleComment;
       totalReplyCount: number;
-    replies: {
-      comments: SingleComment;
-    }
   }
+    replies: Replies;
 }
