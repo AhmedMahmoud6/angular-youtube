@@ -33,9 +33,15 @@
         </div>
 
         <div class="comment-replies-container" *ngIf="expanded().has(c.snippet.topLevelComment.id)">
-          <div class="comment-replies" *ngFor="let rep of repliesCache().get(c.snippet.topLevelComment.id)">
-            <app-reply [reply]="rep"></app-reply>
+          <div class="comment-replies" *ngFor="let rep of (repliesCache().get(c.snippet.topLevelComment.id) ?? [])">
+            <app-reply *ngIf="rep" [reply]="rep"></app-reply>
           </div>
+          <ng-container *ngIf="loadingMap().get(c.snippet.topLevelComment.id)">
+            <div class="loading-spinner">
+              <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
+            </div>
+          </ng-container>
+          <button class="show-more-replies reply-btn" *ngIf="nextPageTokenMap().get(c.snippet.topLevelComment.id)" (click)="loadMoreReplies(c.snippet.topLevelComment.id)">Show more replies</button>
         </div>
 
       </div>

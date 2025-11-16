@@ -1,3 +1,8 @@
+<ng-container *ngIf="!video()">
+  <div class="loading-spinner">
+    <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
+  </div>
+</ng-container>
 <div class="current-video" *ngIf="video() as v">
 <!--  <p>video title is {{v.snippet.title}}</p>-->
   <youtube-player
@@ -69,7 +74,7 @@
     <ng-container *ngIf="comments() else noComments">
       <div class="video-comments-container">
         <h2>{{ video()!.videoDetails.statistics.commentCount }} Comments</h2>
-        <app-comment [comments]="comments()" [repliesCache]="repliesCache()"></app-comment>
+        <app-comment [comments]="comments()"></app-comment>
 <!--        <ul class="comments-list">-->
 <!--          <li *ngFor="let c of comments()">-->
 <!--            <div class="comment-left-side">-->
@@ -119,6 +124,11 @@
 <!--        </ul>-->
 
         <!-- <--- tiny sentinel AFTER the list (this is the important bit) -->
+        <ng-container *ngIf="isLoading()">
+          <div class="loading-spinner">
+            <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
+          </div>
+        </ng-container>
         <div #commentsSection class="comments-sentinel" aria-hidden="true"></div>
       </div>
     </ng-container>

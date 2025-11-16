@@ -1,5 +1,5 @@
-import {ElementRef, NgZone, WritableSignal} from '@angular/core';
-import {Comments, Replies, SingleComment, Video} from '../models/video';
+import {ElementRef, InputSignal, NgZone, WritableSignal} from '@angular/core';
+import {Comments, Replies, SingleComment, SingleReply, Video} from '../models/video';
 import {take} from 'rxjs';
 import {YoutubeService} from '../services/youtube.service';
 
@@ -14,7 +14,6 @@ export function loadMore(
   videos? : WritableSignal<Video[]>,
   comments? : WritableSignal<Comments[]>,
   videoId? : string,
-  repliesCache? : WritableSignal<Map<string, SingleComment[]>>,
 
 
 ) {
@@ -70,15 +69,7 @@ export function loadMore(
         const newItems = res.items ?? [];
         comments?.set([...comments!(), ...newItems]);
 
-        if (comments) {
-          const map = new Map();
-          comments().forEach(com => {
-            map.set(com.snippet.topLevelComment.id, com.replies.comments);
-          })
 
-          repliesCache?.set(map);
-
-        }
 
         nextPageToken.set(res.nextPageToken ?? null);
 
@@ -96,6 +87,63 @@ export function loadMore(
       }
     });
   }
+
+}
+
+export function loadReplies(
+  youtubeService: YoutubeService,
+  repliesCache: WritableSignal<Map<string, SingleComment[]>>,
+  commentId: string,
+  error: WritableSignal<string | null>,
+  loadingMap: WritableSignal<Map<string, boolean>>,
+  nextPageTokenMap: WritableSignal<Map<string, string | null>>
+
+) {
+  const isLoadingFor = loadingMap().get(commentId) ?? false;
+  if (isLoadingFor) return;
+
+  const token = nextPageTokenMap().get(commentId) ?? undefined;
+  if (token === null) return; // no more pages for this comment
+
+
+
+  const lm = new Map(loadingMap());
+  lm.set(commentId, true);
+  loadingMap.set(lm);
+
+  youtubeService.getCommentReplies(token, commentId).pipe(take(1)).subscribe(
+    {
+      next: rep => {
+        const fetched = rep.items ?? [];
+
+        const nt = new Map(nextPageTokenMap());
+        nt.set(commentId, rep?.nextPageToken ?? null);
+        nextPageTokenMap.set(nt);
+
+        if (fetched.length > 0) {
+          const cache = new Map(repliesCache());
+          const existing = cache.get(commentId) ?? [];
+          cache.set(commentId, [...existing, ...fetched]);
+          repliesCache.set(cache);
+
+          // done, clear loading
+          const lm2 = new Map(loadingMap());
+          lm2.set(commentId, false);
+          loadingMap.set(lm2);
+        }
+
+
+      },
+      error: err => {
+        console.error('loadMore: comments error', err);
+        error?.set("Failed To Load Comments");
+        const lm2 = new Map(loadingMap());
+        lm2.set(commentId, false);
+        loadingMap.set(lm2);
+
+      }
+    }
+  )
 
 }
 
@@ -123,7 +171,7 @@ export function setupObserver(
   const options: IntersectionObserverInit = {
     root: null,
     rootMargin: '300px',
-    threshold: 0
+    threshold: 1
   };
 
   let observer: IntersectionObserver | undefined;
@@ -133,7 +181,7 @@ export function setupObserver(
   observer = new IntersectionObserver(entries => {
     for(let entry of entries) {
       if (entry.isIntersecting) {
-        ngZone.run(() => loadMore(isLoading, nextPageToken, youtubeService, observer, loadWhat ,error, videos,comments,videoId,repliesCache));
+        ngZone.run(() => loadMore(isLoading, nextPageToken, youtubeService, observer, loadWhat ,error, videos,comments,videoId));
       }
     }
   },options);

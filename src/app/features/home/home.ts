@@ -13,16 +13,19 @@ import {
 import {Video} from '../../core/models/video';
 import {YoutubeService} from '../../core/services/youtube.service';
 import {VideoCard} from '../../shared/components/video-card/video-card';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {debounceTime, take} from 'rxjs';
 import {loadMore, setupObserver} from '../../core/utils/service.functions';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-home',
   imports: [
     VideoCard,
-    NgForOf
+    NgForOf,
+    MatProgressSpinner,
+    NgIf
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',

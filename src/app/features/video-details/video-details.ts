@@ -15,7 +15,7 @@ import {YoutubeService} from '../../core/services/youtube.service';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {catchError, map, switchMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-import {Comments, FinalVideo, Replies, SingleComment, Video} from '../../core/models/video';
+import {Comments, FinalVideo, Replies, SingleComment, SingleReply, Video} from '../../core/models/video';
 import {NgForOf, NgIf} from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import {formatSubscribers, formatViews, mergeVideoAndChannel, timeAgo} from '../../core/utils/formatters';
@@ -23,6 +23,7 @@ import { faThumbsUp, faThumbsDown, faShare, faDownload, faChevronDown, faChevron
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {loadMore, setupObserver} from '../../core/utils/service.functions';
 import {Comment} from '../../shared/components/comment/comment';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 
 @Component({
@@ -31,7 +32,8 @@ import {Comment} from '../../shared/components/comment/comment';
     NgIf,
     YouTubePlayerModule,
     FaIconComponent,
-    Comment
+    Comment,
+    MatProgressSpinner,
   ],
   templateUrl: './video-details.html',
   styleUrl: './video-details.scss',
@@ -64,7 +66,8 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
   private setupDone: WritableSignal<boolean> = signal(false);
 
   // private localComments: Signal<Comments[]> = computed<Comments[]>(() => this.comments())
-  protected repliesCache: WritableSignal<Map<string, SingleComment[]>> = signal(new Map<string, SingleComment[]>())
+  // protected replies: WritableSignal<SingleReply[]> = signal([]);
+  // protected repliesCache: WritableSignal<Map<string, SingleComment[]>> = signal(new Map<string, SingleComment[]>());
 
   @ViewChild('ytPlayer', { read: ElementRef }) ytPlayerEl?: ElementRef<HTMLDivElement>;
   private commentsSection?: ElementRef<HTMLElement>;
@@ -93,7 +96,6 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
         undefined,
         this.comments,
         vid,
-        this.repliesCache
       );
 
 

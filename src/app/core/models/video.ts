@@ -66,6 +66,11 @@ export interface SingleComment {
   id: string;
 }
 
+export interface SingleReply {
+  nextPageToken: string;
+  items: SingleComment[];
+}
+
 export interface Replies {
   comments: SingleComment;
 }

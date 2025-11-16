@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Comments, Video} from '../models/video';
+import {Comments, SingleComment, SingleReply, Video} from '../models/video';
 import {Observable, throwError} from "rxjs";
 
 @Injectable({
@@ -52,7 +52,7 @@ export class YoutubeService {
     }
 
     const paramObj : Record<string, string> = {
-      part: "snippet,replies",
+      part: "snippet",
       order: "relevance",
       ...(pageToken ? {pageToken} : {}),
       videoId,
@@ -62,4 +62,18 @@ export class YoutubeService {
     return this.http.get<{items: Comments[]; nextPageToken: string}>(`${this.apiUrl}/commentThreads?key=${this.apiKey}`, { params: params })
 
   }
+
+  getCommentReplies(pageToken: string | undefined, parentId: string) {
+    const paramObj : Record<string, string> = {
+      part: "snippet",
+      ...(pageToken ? {pageToken} : {}),
+      parentId,
+      maxResults: '10',
+    }
+    const params = new HttpParams({ fromObject: paramObj });
+
+    return this.http.get<{items: SingleComment[]; nextPageToken: string}>(`${this.apiUrl}/comments?key=${this.apiKey}`, { params: params })
+  }
+
 }
+

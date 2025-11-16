@@ -1,4 +1,9 @@
 <div class="app-container">
 <app-video-card *ngFor="let video of videos()" [video]="video"></app-video-card>
-  <div class="sentinel" #sentinel></div>
 </div>
+  <ng-container *ngIf="isLoading()">
+    <div class="loading-spinner">
+      <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
+    </div>
+  </ng-container>
+  <div class="sentinel" #sentinel></div>
