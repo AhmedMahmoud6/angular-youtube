@@ -16,7 +16,7 @@ import {VideoCard} from '../../shared/components/video-card/video-card';
 import {NgForOf, NgIf} from '@angular/common';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {debounceTime, take} from 'rxjs';
-import {loadMore, setupObserver} from '../../core/utils/service.functions';
+import {createSharedObserver, loadMore} from '../../core/utils/service.functions';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 
 @Component({
@@ -41,8 +41,38 @@ export class Home implements AfterViewInit, OnDestroy {
   nextPageToken: WritableSignal<string | null | undefined> = signal<string | null | undefined>(undefined);
   isLoading: WritableSignal<boolean> = signal(false);
   error: WritableSignal<string | null> = signal<string | null>(null);
-  private observer?: IntersectionObserver;
-  @ViewChild('sentinel', {static: false, read: ElementRef}) sentinel?: ElementRef<HTMLElement>;
+  private homeSetupDone: WritableSignal<boolean> = signal(false);
+  private homeSentinel?: Element;
+
+  private sharedObserver?: {
+    observer: IntersectionObserver;
+    observeElement(el: Element, meta: any): void;
+    unobserveElement(el: Element | undefined): void;
+    disconnect(): void
+  } = createSharedObserver(this.ngZone, { root: null, rootMargin: '300px', threshold: 1 });
+
+  @ViewChild('sentinel', {static: false, read: ElementRef})
+  set homeSectionRef (el: ElementRef<HTMLElement>) {
+    const v = this.videos();
+    this.homeSentinel = el.nativeElement ?? undefined;
+    // console.log(this.homeSentinel )
+    if (!this.homeSetupDone() && this.homeSentinel && v) {
+      this.homeSetupDone.set(true);
+      // console.log("test")
+
+      this.sharedObserver?.observeElement(this.homeSentinel, {
+        isLoading: this.isLoading,
+        nextPageToken: this.nextPageToken,
+        youtubeService: this.youtubeService,
+        loadWhat: 'videos',
+        error: this.error,
+        videos: this.videos,
+      })
+
+
+    }
+
+  }
 
 
   // loadMore() {
@@ -100,23 +130,25 @@ export class Home implements AfterViewInit, OnDestroy {
 
 
   ngAfterViewInit() {
-    loadMore(this.isLoading, this.nextPageToken, this.youtubeService, this.observer, "videos",this.error, this.videos);
-    this.observer = setupObserver(
-      this.sentinel,
-      this.ngZone,
-      this.isLoading,
-      this.nextPageToken,
-      this.youtubeService,
-      "videos",
-      this.error,
-      this.videos,
-      undefined,
-      undefined,
-      )
+    // loadMore(this.isLoading, this.nextPageToken, this.youtubeService, "videos",this.error, this.videos);
+    // this.observer = setupObserver(
+    //   this.sentinel,
+    //   this.ngZone,
+    //   this.isLoading,
+    //   this.nextPageToken,
+    //   this.youtubeService,
+    //   "videos",
+    //   this.error,
+    //   this.videos,
+    //   undefined,
+    //   undefined,
+    //   )
+
   }
 
   ngOnDestroy() {
-    this.observer?.disconnect();
+    this.sharedObserver?.unobserveElement(this.homeSentinel);
+    this.sharedObserver?.disconnect();
   }
 
 
@@ -151,7 +183,7 @@ export class Home implements AfterViewInit, OnDestroy {
   //
   constructor() {
     effect(() => {
-      console.log(this.videos())
+      // console.log(this.videos())
     });
   }
 

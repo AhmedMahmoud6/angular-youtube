@@ -1,5 +1,5 @@
 import {ElementRef, InputSignal, NgZone, WritableSignal} from '@angular/core';
-import {Comments, Replies, SingleComment, SingleReply, Video} from '../models/video';
+import {Comments, Replies, SingleComment, SingleReply, SuggestedVideo, Video} from '../models/video';
 import {take} from 'rxjs';
 import {YoutubeService} from '../services/youtube.service';
 
@@ -8,15 +8,21 @@ export function loadMore(
   isLoading: WritableSignal<boolean>,
   nextPageToken: WritableSignal<string | null | undefined>,
   youtubeService: YoutubeService,
-  observer: IntersectionObserver | undefined,
   loadWhat: string,
   error? :WritableSignal<string | null>,
   videos? : WritableSignal<Video[]>,
   comments? : WritableSignal<Comments[]>,
   videoId? : string,
+  videoTags?: string[],
+  suggestedVideos?: WritableSignal<SuggestedVideo[]>,
+  suggestedNextPageToken?: WritableSignal<string | null | undefined>,
+  suggestedIsLoading?: WritableSignal<boolean>,
+  suggestedError?: WritableSignal<string | null>,
 
 
 ) {
+
+  console.log("Loading", loadWhat)
 
   if (loadWhat === "videos") {
 
@@ -33,7 +39,7 @@ export function loadMore(
         const newItems = res.items ?? [];
         videos?.set([...videos!(), ...newItems]);
         nextPageToken.set(res.nextPageToken ?? null);
-        if (!res.nextPageToken) observer?.disconnect();
+        // if (!res.nextPageToken) observer?.disconnect();
       },
       error: err => {
         console.error(err);
@@ -42,6 +48,7 @@ export function loadMore(
       complete: () => isLoading.set(false),
     }
   )
+    return;
 
   }
 
@@ -75,7 +82,7 @@ export function loadMore(
 
 
         if (!res.nextPageToken) {
-          observer?.disconnect();
+          // observer?.disconnect();
         }
       },
       error: err => {
@@ -86,6 +93,52 @@ export function loadMore(
         isLoading.set(false);
       }
     });
+
+    return;
+  }
+  else if (loadWhat === "suggested") {
+
+    if (suggestedIsLoading!()) {
+      console.log('loadMore: already loading -> abort');
+      return;
+    }
+    if (suggestedNextPageToken!() === null && suggestedVideos!().length > 0) {
+      console.log('loadMore: nextPageToken is null and have items -> abort');
+      return;
+    }
+
+    suggestedIsLoading!.set(true);
+
+    const token = suggestedNextPageToken!() ?? undefined;
+
+    console.log("Inside suggested")
+
+    youtubeService.getVideoSuggestions(token, videoTags).pipe(take(1)).subscribe(
+      {
+        next: res => {
+          const newItems = res.items;
+          suggestedVideos?.set([...suggestedVideos(), ...newItems]);
+
+          suggestedNextPageToken?.set(res.nextPageToken);
+
+          // console.log(newItems);
+
+
+          if (!res.nextPageToken) {
+            // disconnect with the observer
+            // observer?.disconnect()
+          }
+        },
+        error: err => {
+          console.error('loadMore: comments error', err);
+          suggestedError?.set("Failed To Load Comments");
+        },
+        complete: () => {
+          suggestedIsLoading?.set(false);
+        }
+      }
+    )
+    return;
   }
 
 }
@@ -147,51 +200,136 @@ export function loadReplies(
 
 }
 
-export function setupObserver(
-  sentinel : ElementRef<HTMLElement> | undefined,
-  ngZone: NgZone,
-  isLoading: WritableSignal<boolean>,
-  nextPageToken: WritableSignal<string | null | undefined>,
-  youtubeService: YoutubeService,
-  loadWhat: string,
-  error? :WritableSignal<string | null>,
-  videos? : WritableSignal<Video[]>,
-  comments? : WritableSignal<Comments[]>,
-  videoId? : string,
-  repliesCache? : WritableSignal<Map<string, SingleComment[]>>,
+// export function setupObserver(
+//   sentinel : ElementRef<HTMLElement> | undefined,
+//   ngZone: NgZone,
+//   isLoading: WritableSignal<boolean>,
+//   nextPageToken: WritableSignal<string | null | undefined>,
+//   youtubeService: YoutubeService,
+//   loadWhat: string,
+//   error? :WritableSignal<string | null>,
+//   videos? : WritableSignal<Video[]>,
+//   comments? : WritableSignal<Comments[]>,
+//   videoId? : string,
+//   videoTag? : string[],
+//   suggestedVideos?: WritableSignal<SuggestedVideo[]>,
+//   suggestedNextPageToken?: WritableSignal<string | null | undefined>,
+//   suggestedIsLoading?: WritableSignal<boolean>,
+//   suggestedError?: WritableSignal<string | null>,
+//
+// ) {
+//   if (!sentinel?.nativeElement) {
+//     console.warn('setupObserver: sentinel not available yet');
+//     return undefined;
+//   }
+//
+//
+//
+//   const options: IntersectionObserverInit = {
+//     root: null,
+//     rootMargin: '300px',
+//     threshold: 1
+//   };
+//
+//   let observer: IntersectionObserver | undefined;
+//
+//   ngZone.runOutsideAngular(() => {
+//
+//   observer = new IntersectionObserver(entries => {
+//     for(let entry of entries) {
+//       if (entry.isIntersecting) {
+//         ngZone.run(() => loadMore(
+//           isLoading,
+//           nextPageToken,
+//           youtubeService,
+//           observer,
+//           loadWhat
+//           ,error,
+//           videos,
+//           comments,
+//           videoId,
+//           videoTag,
+//           suggestedVideos,
+//           suggestedNextPageToken,
+//           suggestedIsLoading,
+//           suggestedError,
+//         ));
+//       }
+//     }
+//   },options);
+//
+//     observer.observe(sentinel.nativeElement);
+//
+//   })
+//
+//
+//   return observer;
+//
+//
+// }
 
-) {
-  if (!sentinel?.nativeElement) {
-    console.warn('setupObserver: sentinel not available yet');
-    return undefined;
-  }
+export function createSharedObserver(ngZone: NgZone, options: IntersectionObserverInit) {
+  let elementState = new WeakMap<Element, {
+    loadWhat: string,
+    isLoading: WritableSignal<boolean>,
+    nextPageToken: WritableSignal<string | null | undefined>,
+    youtubeService: YoutubeService,
+    error? :WritableSignal<string | null>,
+    videos? : WritableSignal<Video[]>,
+    comments? : WritableSignal<Comments[]>,
+    videoId? : string,
+    videoTags?: string[],
+    suggestedVideos?: WritableSignal<SuggestedVideo[]>,
+    suggestedNextPageToken?: WritableSignal<string | null | undefined>,
+    suggestedIsLoading?: WritableSignal<boolean>,
+    suggestedError?: WritableSignal<string | null>,
+  }>();
+
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target;
+      const state = elementState.get(el);
+      if (!state) continue;
 
 
-
-  const options: IntersectionObserverInit = {
-    root: null,
-    rootMargin: '300px',
-    threshold: 1
-  };
-
-  let observer: IntersectionObserver | undefined;
-
-  ngZone.runOutsideAngular(() => {
-
-  observer = new IntersectionObserver(entries => {
-    for(let entry of entries) {
-      if (entry.isIntersecting) {
-        ngZone.run(() => loadMore(isLoading, nextPageToken, youtubeService, observer, loadWhat ,error, videos,comments,videoId));
-      }
+      ngZone.run(() => {
+        loadMore(
+          state.isLoading,
+          state.nextPageToken,
+          state.youtubeService,
+          state.loadWhat,
+          state.error,
+          state.videos,
+          state.comments,
+          state.videoId,
+          state.videoTags,
+          state.suggestedVideos,
+          state.suggestedNextPageToken,
+          state.suggestedIsLoading,
+          state.suggestedError,
+        );
+      });
     }
-  },options);
-
-    observer.observe(sentinel.nativeElement);
-
-  })
+  }, options);
 
 
-  return observer;
+  return {
+    observer,
 
+    observeElement(el: Element, meta: any) {
+      elementState.set(el, meta);
+      observer.observe(el);
+    },
 
+    unobserveElement(el: Element) {
+      elementState.delete(el);
+      observer.unobserve(el);
+    },
+
+    disconnect() {
+      observer.disconnect();
+      elementState = new WeakMap(); // reset the storage
+    }
+  };
 }

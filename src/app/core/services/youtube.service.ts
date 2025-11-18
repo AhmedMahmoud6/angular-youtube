@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Comments, SingleComment, SingleReply, Video} from '../models/video';
+import {Comments, SingleComment, SingleReply, SuggestedVideo, Video} from '../models/video';
 import {Observable, throwError} from "rxjs";
 
 @Injectable({
@@ -37,7 +37,7 @@ export class YoutubeService {
     return this.http.get<{items: Video[]; nextPageToken: string}>(`${this.apiUrl}/videos?key=${this.apiKey}`, { params: params })
   }
 
-  getVideoById(videoId: string | null): Observable<{ items: Video[] }> {
+  getVideoById(videoId: string | null | undefined): Observable<{ items: Video[] }> {
     return this.http.get<{items: Video[]}>(`${this.apiUrl}/videos?key=${this.apiKey}&id=${videoId}`, {params: this.videoParams})
   }
 
@@ -73,6 +73,24 @@ export class YoutubeService {
     const params = new HttpParams({ fromObject: paramObj });
 
     return this.http.get<{items: SingleComment[]; nextPageToken: string}>(`${this.apiUrl}/comments?key=${this.apiKey}`, { params: params })
+  }
+
+  getVideoSuggestions(pageToken: string | undefined, tags: string[] | undefined) {
+    const q = tags?.join("|");
+
+    const paramObj : Record<string, string> = {
+      part: "snippet",
+      type: "video",
+      ...(pageToken ? {pageToken} : {}),
+      ...(q ? {q} : {}),
+      maxResults: '20',
+    }
+
+    const params = new HttpParams({ fromObject: paramObj });
+
+
+    return this.http.get<{items: SuggestedVideo[]; nextPageToken: string}>(`${this.apiUrl}/search?key=${this.apiKey}`, { params: params })
+
   }
 
 }

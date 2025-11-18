@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import {provideRouter, Routes, withInMemoryScrolling} from '@angular/router';
+import {ApplicationConfig} from '@angular/core';
 
 
 export const routes: Routes = [

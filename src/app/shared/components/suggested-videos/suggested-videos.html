@@ -1,0 +1,15 @@
+<ng-container *ngIf="suggestedVideos()">
+  <div class="suggested-container" (click)="router.navigate(['/video', vid.id.videoId])" *ngFor="let vid of suggestedVideos()">
+    <div class="suggested-left-side">
+      <img [src]="vid.snippet.thumbnails.high?.url" alt="">
+    </div>
+
+    <div class="suggested-right-side">
+      <div class="suggested-title">{{vid.snippet.title}}</div>
+      <div class="suggested-channel-title">{{vid.snippet.channelTitle}}</div>
+      <div class="suggested-vid-details">
+        <p>{{timeAgo(vid.snippet.publishedAt)}}</p>
+      </div>
+    </div>
+  </div>
+</ng-container>

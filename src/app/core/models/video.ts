@@ -26,6 +26,7 @@ export interface VideoSnippet {
   description: string;
   thumbnails: Thumbnails;
   channelTitle: string;
+  tags: string[];
 }
 
 export interface contentDetails {
@@ -54,9 +55,16 @@ export interface FinalVideo {
 
 }
 
+export interface SuggestedVideo {
+    id: {
+      videoId: string;
+    };
+    snippet: VideoSnippet;
+}
+
 export interface SingleComment {
   snippet: {
-    textOriginal: string;
+    textDisplay: string;
     authorDisplayName: string;
     authorProfileImageUrl: string;
     authorChannelId: {value: string};
