@@ -1,5 +1,5 @@
-<ng-container *ngIf="suggestedVideos()">
-  <div class="suggested-container" (click)="router.navigate(['/video', vid.id.videoId])" *ngFor="let vid of suggestedVideos()">
+<ng-container *ngIf="filteredSuggest()">
+  <div class="suggested-container" (click)="onClick(vid)" *ngFor="let vid of filteredSuggest()">
     <div class="suggested-left-side">
       <img [src]="vid.snippet.thumbnails.high?.url" alt="">
     </div>

@@ -4,13 +4,12 @@ import {YoutubeService} from '../../../core/services/youtube.service';
 import {NgIf} from '@angular/common';
 import {formatViews, formatYouTubeDuration, mergeVideoAndChannel, timeAgo} from '../../../core/utils/formatters';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-import {RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-video-card',
   imports: [
     NgIf,
-    RouterLink
   ],
   templateUrl: './video-card.html',
   styleUrl: './video-card.scss',
@@ -20,6 +19,8 @@ export class VideoCard implements OnInit{
   video: InputSignal<Video | undefined> = input<Video>();
   channel = signal<Video[]>([])
   finalVideo = signal<FinalVideo | undefined>(undefined);
+
+  protected router = inject(Router);
 
 
 
@@ -43,13 +44,18 @@ export class VideoCard implements OnInit{
   protected readonly formatYouTubeDuration = formatYouTubeDuration;
 
   ngOnInit() {
-
     const video = this.video();
     if (video?.snippet.channelId) {
+
+
       this.youtubeService.getChannel(video.snippet.channelId).subscribe(value => {
         this.channel.set(value.items)
 
       this.finalVideo.set(mergeVideoAndChannel(this.video()!, this.channel()!));
+        const vidId = this.finalVideo()?.videoDetails.snippet.categoryId;
+        // if (vidId)
+
+        // console.log(vidId);
 
       })
     }
@@ -89,6 +95,13 @@ export class VideoCard implements OnInit{
     this.previewVisible.set(false);
     this.iframeSrc.set(null);
     clearTimeout(this.timerId);
+  }
+
+  onClick(categoryId: string | undefined) {
+    this.youtubeService.homeVideoCategoryId?.set(categoryId);
+    this.youtubeService.isVideoFromHome.set(true);
+
+    this.router.navigate(['/video', this.finalVideo()!.videoDetails.id])
   }
 
 

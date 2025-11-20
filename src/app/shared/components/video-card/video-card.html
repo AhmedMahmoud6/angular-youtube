@@ -1,5 +1,5 @@
 <div class="video card " *ngIf="finalVideo()" (mouseenter)="showPreview()" (mouseleave)="hidePreview()"
- [routerLink]="['/video', finalVideo()!.videoDetails.id]">
+     (click)="onClick(finalVideo()?.videoDetails?.snippet?.categoryId)">
 
   <div class="video-media">
   <div class="video-img" *ngIf="finalVideo()?.videoDetails?.snippet?.thumbnails?.maxres?.url as imgUrl; else fallbackImg"

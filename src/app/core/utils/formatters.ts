@@ -60,7 +60,8 @@ export function mergeVideoAndChannel(video: Video, channel: Video[]): FinalVideo
         channelTitle: video.snippet.channelTitle,
         publishedAt: video.snippet.publishedAt,
         description: video.snippet.description,
-        tags: video.snippet.tags
+        tags: video.snippet.tags,
+        categoryId: video.snippet.categoryId,
       },
       id: video.id,
       brandingSettings: {

@@ -87,6 +87,7 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
   error: WritableSignal<string | null> = signal<string | null>(null);
 
   private videoTag: string[] | undefined = [];
+  videoCategoryId: WritableSignal<string> | undefined;
 
   private sharedObserver?: {
     observer: IntersectionObserver;
@@ -131,7 +132,8 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
         suggestedVideos: this.suggestedVideos,
         suggestedNextPageToken: this.suggestedNextPageToken,
         suggestedIsLoading: this.suggestedIsLoading,
-        suggestedError: this.suggestedError
+        suggestedError: this.suggestedError,
+        videoCategoryId: this.videoCategoryId,
       })
 
       // console.log("old suggested",this.suggestedVideos())
@@ -186,6 +188,7 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
       const video = videoRes?.items?.[0];
       if (!video) return of(null);
       this.videoTag = video.snippet.tags;
+      // this.videoCategoryId?.set(video.snippet.categoryId);
       return this.youtube.getChannel(video.snippet.channelId).pipe(
         map(channelRes => mergeVideoAndChannel(video, channelRes.items)),
         catchError(() => of(null))
@@ -204,8 +207,6 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
     this.sharedObserver?.unobserveElement(this.suggestedSentinel);
     this.sharedObserver?.disconnect();
   }
-
-
 
 
   constructor() {
@@ -230,7 +231,7 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
               error: this.error,
               videos: this.video,
               comments: this.comments,
-              videoId: this.video()?.videoDetails.id,
+              videoId: id,
               videoTags: this.videoTag,
               isLoading: this.isLoading,
 
@@ -243,12 +244,14 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
               suggestedVideos: this.suggestedVideos,
               suggestedNextPageToken: this.suggestedNextPageToken,
               suggestedIsLoading: this.suggestedIsLoading,
-              suggestedError: this.suggestedError
+              suggestedError: this.suggestedError,
+              videoCategoryId: this.videoCategoryId,
             })
             //
             // console.log("new suggested",this.suggestedVideos())
             // console.log("new comments",this.comments())
             // console.log('New video id:', id);
+            // console.log('New videoCategory id:', this.videoCategoryId);
           });
 
 
@@ -260,14 +263,14 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
 
 
     effect(() => {
-        // console.log(this.suggestedVideos());
+        console.log(this.videoTag);
+        // console.log(this.videoCategoryId!());
         // console.log(this.comments());
 
       // testing
       if (this.isFirstTime()) {
         this.isFirstTime.set(false);
-        let filteredSuggest = this.suggestedVideos().filter(res => res.id.videoId !== this.video()?.videoDetails.id);
-        this.suggestedVideos.set(filteredSuggest);
+        // this.suggestedVideos.set(filteredSuggest);
 
       }
 

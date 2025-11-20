@@ -27,6 +27,7 @@ export interface VideoSnippet {
   thumbnails: Thumbnails;
   channelTitle: string;
   tags: string[];
+  categoryId: string;
 }
 
 export interface contentDetails {

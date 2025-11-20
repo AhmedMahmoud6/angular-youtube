@@ -1,7 +1,8 @@
 import {ElementRef, InputSignal, NgZone, WritableSignal} from '@angular/core';
 import {Comments, Replies, SingleComment, SingleReply, SuggestedVideo, Video} from '../models/video';
-import {take} from 'rxjs';
+import {of, switchMap, take} from 'rxjs';
 import {YoutubeService} from '../services/youtube.service';
+
 
 
 export function loadMore(
@@ -18,11 +19,12 @@ export function loadMore(
   suggestedNextPageToken?: WritableSignal<string | null | undefined>,
   suggestedIsLoading?: WritableSignal<boolean>,
   suggestedError?: WritableSignal<string | null>,
+  videoCategoryId? : WritableSignal<string> | undefined,
 
 
 ) {
 
-  console.log("Loading", loadWhat)
+  console.log("Loading", loadWhat);
 
   if (loadWhat === "videos") {
 
@@ -112,8 +114,20 @@ export function loadMore(
     const token = suggestedNextPageToken!() ?? undefined;
 
     console.log("Inside suggested")
+    // console.log("Inside suggested videoCatgeory", videoCategoryId!())
 
-    youtubeService.getVideoSuggestions(token, videoTags).pipe(take(1)).subscribe(
+    youtubeService.getVideoSuggestions(token, videoTags).pipe(take(1),
+      switchMap(res =>{
+        if (res.items.length === 0) {
+          const homeVidId = youtubeService.homeVideoCategoryId?.();
+          // if the video is not from the home
+          if (!youtubeService.isVideoFromHome()) youtubeService.homeVideoCategoryId.set(undefined);
+
+          return youtubeService.getSuggestedVideos(token, homeVidId ?? videoCategoryId?.());
+        }
+        return of(res);
+      })
+      ).subscribe(
       {
         next: res => {
           const newItems = res.items;
@@ -121,7 +135,6 @@ export function loadMore(
 
           suggestedNextPageToken?.set(res.nextPageToken);
 
-          // console.log(newItems);
 
 
           if (!res.nextPageToken) {
@@ -283,6 +296,7 @@ export function createSharedObserver(ngZone: NgZone, options: IntersectionObserv
     suggestedNextPageToken?: WritableSignal<string | null | undefined>,
     suggestedIsLoading?: WritableSignal<boolean>,
     suggestedError?: WritableSignal<string | null>,
+    videoCategoryId?: WritableSignal<string> | undefined ,
   }>();
 
   const observer = new IntersectionObserver(entries => {
@@ -308,6 +322,7 @@ export function createSharedObserver(ngZone: NgZone, options: IntersectionObserv
           state.suggestedNextPageToken,
           state.suggestedIsLoading,
           state.suggestedError,
+          state.videoCategoryId,
         );
       });
     }
