@@ -72,9 +72,9 @@
       <p>{{timeAgo(v.videoDetails.snippet.publishedAt)}}</p>
     </div>
 
-    <ng-container *ngIf="comments() else noComments">
+    <ng-container *ngIf="comments() && !error()">
       <div class="video-comments-container">
-        <h2>{{ video()!.videoDetails.statistics.commentCount }} Comments</h2>
+        <h2 *ngIf="!error()">{{ video()!.videoDetails.statistics.commentCount }} Comments</h2>
         <app-comment [comments]="comments()"></app-comment>
 
         <!-- <--- tiny sentinel AFTER the list (this is the important bit) -->
@@ -87,9 +87,9 @@
       </div>
     </ng-container>
 
-    <ng-template #noComments>
-      <h1>No Comments</h1>
-    </ng-template>
+    <ng-container *ngIf="error()">
+      <h1 class="error-h1">{{ error() }}</h1>
+    </ng-container>
 
   </div>
 

@@ -113,6 +113,23 @@ export class YoutubeService {
 
   }
 
+  getSearchResults(q: string) {
+
+
+    const paramObj : Record<string, string> = {
+      part: "snippet",
+      type: "video",
+      q,
+      maxResults: '10',
+    }
+
+    const params = new HttpParams({ fromObject: paramObj });
+
+
+    return this.http.get<{items: SuggestedVideo[]; nextPageToken: string}>(`${this.apiUrl}/search?key=${this.apiKey}`, { params: params })
+
+  }
+
 
 }
 

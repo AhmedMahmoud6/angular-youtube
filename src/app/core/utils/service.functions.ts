@@ -88,8 +88,14 @@ export function loadMore(
         }
       },
       error: err => {
-        console.error('loadMore: comments error', err);
-        error?.set("Failed To Load Comments");
+        if (err.status === 403 && err.error?.error?.errors?.[0]?.reason === 'commentsDisabled') {
+          error?.set('Comments are disabled for this video.');
+
+        }
+        else {
+          error?.set('An unexpected error occurred.');
+        }
+        isLoading.set(false);
       },
       complete: () => {
         isLoading.set(false);
@@ -145,6 +151,7 @@ export function loadMore(
         error: err => {
           console.error('loadMore: comments error', err);
           suggestedError?.set("Failed To Load Comments");
+          suggestedIsLoading?.set(false);
         },
         complete: () => {
           suggestedIsLoading?.set(false);

@@ -18,11 +18,30 @@
   <div class="nav-center">
     <div class="search-parent">
 
-      <input type="text" placeholder="Search">
+      <input
+        #searchInput
+        class="search-input"
+        type="text"
+        placeholder="Search"
+        (input)="onKeyDown($event)"
+        (click)="onInputClick()"
+      >
 
       <div class="search-icon">
         <fa-icon [icon]="faMagnifyingGlass"></fa-icon>
       </div>
+
+      <ul class="search-list" *ngIf="isToggled()">
+        <li *ngFor="let result of queryResults()">
+          <div class="list-left">
+            <fa-icon [icon]="faMagnifyingGlass"></fa-icon>
+            <p>{{ decodeHtml(result.snippet.title) }}</p>
+          </div>
+          <div class="list-right">
+            <img [src]="result.snippet.thumbnails.default.url" alt="video thumbnail">
+          </div>
+        </li>
+      </ul>
 
     </div>
 

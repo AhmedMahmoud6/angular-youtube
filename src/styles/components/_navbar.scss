@@ -44,28 +44,83 @@
 
     .search-parent {
       @include mixins.center-flex();
+      position: relative;
       width: 640px;
       height: 40px;
       outline: 1px solid var(--outline);
       border-radius: 20px;
-      overflow: hidden;
 
       input {
-        //border-radius: 20px;
+        outline: none;
         background-color: #121212;
         border: none;
         padding: 18px;
         height: 100%;
-        outline: 1px solid var(--outline);
         width: 100%;
         color: white;
         font-size: 18px;
       }
+      &:focus-within {
+        outline: 1px solid var(--reply-button);
+      }
+
+
+      .search-list {
+        list-style: none;
+        position: absolute;
+        width: 100%;
+        //height: 500px;
+        top: 50px;
+        background-color: var(--search-background);
+        padding: 10px;
+        border-radius: 10px;
+
+        li {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px;
+          border-radius: 10px;
+          &:hover {
+            background-color: var(--search-background-hover);
+          }
+
+          .list-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+            p {
+              width: 350px;
+              text-wrap: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+            }
+          }
+
+          .list-right {
+            pointer-events: none;
+            height: 40px;
+
+            img {
+              width: 100%;
+              height: 100%;
+              border-radius: 10px;
+              aspect-ratio: 16 / 9;
+              object-fit: cover;
+            }
+          }
+        }
+      }
+
+
+
 
       .search-icon {
         width: 60px;
         height: 100%;
         background-color: #222222;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
         @include mixins.center-flex();
 
         fa-icon {
