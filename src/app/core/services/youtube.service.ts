@@ -34,7 +34,7 @@ export class YoutubeService {
     const paramObj : Record<string, string> = {
       ...this.params,
       ...(pageToken ? {pageToken} : {}),
-      maxResults: '5',
+      maxResults: '12',
     }
     const params = new HttpParams({ fromObject: paramObj });
 
@@ -49,7 +49,7 @@ export class YoutubeService {
       ...this.params,
       ...(pageToken ? {pageToken} : {}),
       ...(videoCategoryId ? {videoCategoryId} : {}),
-      maxResults: '5',
+      maxResults: '12',
     }
     const params = new HttpParams({ fromObject: paramObj });
 
@@ -75,7 +75,7 @@ export class YoutubeService {
       order: "relevance",
       ...(pageToken ? {pageToken} : {}),
       videoId,
-      maxResults: '5',
+      maxResults: '12',
     }
     const params = new HttpParams({ fromObject: paramObj });
 
@@ -103,7 +103,7 @@ export class YoutubeService {
       type: "video",
       ...(pageToken ? {pageToken} : {}),
       ...(q ? {q} : {}),
-      maxResults: '5',
+      maxResults: '12',
     }
 
     const params = new HttpParams({ fromObject: paramObj });
@@ -113,14 +113,15 @@ export class YoutubeService {
 
   }
 
-  getSearchResults(q: string) {
+  getSearchResults(q: string, pageToken?: string | undefined) {
 
 
     const paramObj : Record<string, string> = {
       part: "snippet",
       type: "video",
       q,
-      maxResults: '10',
+      ...(pageToken ? {pageToken} : {}),
+      maxResults: '12',
     }
 
     const params = new HttpParams({ fromObject: paramObj });

@@ -71,6 +71,7 @@ export class Navbar implements OnInit{
 
   onInputClick () {
     if (this.query().length > 0) this.isToggled.set(true);
+    this.selectedIndex.set(-1);
   }
 
   onKeyDown(event: Event) {
@@ -113,6 +114,19 @@ export class Navbar implements OnInit{
       this.onResultClick(this.queryResults()[this.selectedIndex()].id.videoId);
       this.isToggled.set(false)
 
+    }
+    // navigate to search page
+    if (event.key === "Enter" && this.selectedIndex() === -1) {
+      event.preventDefault();
+      this.navigateToSearchPage();
+
+    }
+  }
+
+  navigateToSearchPage() {
+    if (this.query()) {
+      this.router.navigate(['/search'], {queryParams: {q: this.query()}, queryParamsHandling: "merge"})
+      this.isToggled.set(false)
     }
   }
 

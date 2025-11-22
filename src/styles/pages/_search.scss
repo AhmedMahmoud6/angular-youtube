@@ -1,0 +1,67 @@
+
+
+.search-page-parent {
+  padding: 10px 0 0 15vw;
+
+  @media (max-width: 1200px) {
+    padding: 0;
+  }
+
+  .search-video {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    margin: 20px 0;
+    cursor: pointer;
+
+    .search-video-left {
+      width: 100%;
+      height: 100%;
+      max-width: 500px;
+      max-height: 300px;
+      img {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 10px;
+        object-fit: cover;
+      }
+    }
+
+    .search-video-right {
+      max-width: 850px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      color: var(--text-desc);
+
+      h3 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        color: var(--text);
+      }
+
+      .search-video-desc {
+        p {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+        }
+      }
+    }
+
+  }
+
+
+}
+
+
+.search-sentinel {
+  margin-top: 200px;
+  height: 100px;
+  width: 100%;
+  display: block;
+}

@@ -11,5 +11,9 @@ export const routes: Routes = [
   {
     path: "video/:id",
     loadChildren: () => import("./features/video-details/video-details.route").then(m => m.VIDEO_DETAILS_ROUTES),
+  },
+  {
+    path: "search",
+    loadComponent: () => import("./features/search/search").then(m => m.Search),
   }
 ];

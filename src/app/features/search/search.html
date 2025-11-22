@@ -1,0 +1,28 @@
+<div class="search-page-parent" *ngIf="videos()">
+  <div class="search-video" (click)="router.navigate(['/video', vid.id.videoId])" *ngFor="let vid of videos()">
+    <div class="search-video-left">
+      <img [src]="vid.snippet.thumbnails.high?.url" alt="video thumbnail">
+    </div>
+    <div class="search-video-right">
+      <h3>{{decodeHtml(vid.snippet.title)}}</h3>
+      <div class="search-video-details">
+        <p>{{timeAgo(vid.snippet.publishedAt)}}</p>
+      </div>
+      <div class="search-video-channel-details">
+        <p>{{vid.snippet.channelTitle}}</p>
+      </div>
+
+      <div class="search-video-desc">
+        <p>{{vid.snippet.description}}</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<ng-container *ngIf="isLoading()">
+  <div class="loading-spinner">
+    <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
+  </div>
+</ng-container>
+<div class="search-sentinel" #searchSentinel aria-hidden="true"></div>

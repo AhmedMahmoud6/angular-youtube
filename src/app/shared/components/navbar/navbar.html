@@ -6,6 +6,7 @@
 
     <div class="logo" routerLink="">
       <img
+        referrerpolicy="no-referrer"
         src="https://upload.wikimedia.org/wikipedia/commons/0/0b/YouTube_2024_%28white_text%29.svg"
         alt="YouTube Logo"
       />
@@ -28,7 +29,7 @@
         (click)="onInputClick()"
       >
 
-      <div class="search-icon">
+      <div class="search-icon" (click)="navigateToSearchPage()">
         <fa-icon [icon]="faMagnifyingGlass"></fa-icon>
       </div>
 
@@ -66,7 +67,10 @@
     </div>
 
     <div class="profile">
-      <img src="https://lh3.googleusercontent.com/ogw/AF2bZyhcgXoCv3FWafVkRRnRDRmyupy6E8xwSrQJUq0fDtqSrA=s64-c-mo" alt="pfp">
+      <img
+        src="https://lh3.googleusercontent.com/ogw/AF2bZyhcgXoCv3FWafVkRRnRDRmyupy6E8xwSrQJUq0fDtqSrA=s64-c-mo"
+        alt="pfp"
+        referrerpolicy="no-referrer">
     </div>
   </div>
 </div>
