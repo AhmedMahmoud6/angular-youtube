@@ -1,7 +1,7 @@
 import {Component, ElementRef, HostListener, inject, OnInit, signal, ViewChild, WritableSignal} from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBars, faMagnifyingGlass, faMicrophone, faAdd, faBell } from '@fortawesome/free-solid-svg-icons';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {NgForOf, NgIf} from '@angular/common';
 import {debounceTime, distinctUntilChanged, filter, of, Subject, switchMap, take} from 'rxjs';
 import {YoutubeService} from '../../../core/services/youtube.service';
@@ -23,12 +23,16 @@ export class Navbar implements OnInit{
   faAdd = faAdd;
   faBell = faBell;
 
-  protected isToggled: WritableSignal<boolean> = signal(false);
   query: WritableSignal<string> = signal('');
   q$ = new Subject<string>();
-  isQuerying: WritableSignal<boolean> = signal<boolean>(false);
   queryResults: WritableSignal<SuggestedVideo[]> = signal<SuggestedVideo[]>([])
+
   private youtube: YoutubeService = inject(YoutubeService);
+  protected router = inject(Router);
+
+  protected readonly decodeHtml = decodeHtml;
+  protected isToggled: WritableSignal<boolean> = signal(false);
+  selectedIndex = signal(-1);
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
@@ -70,12 +74,14 @@ export class Navbar implements OnInit{
   }
 
   onKeyDown(event: Event) {
+    this.selectedIndex.set(-1);
     const value = (event.target as HTMLInputElement).value;
     this.query.set(value);
     if (value.trim() === "") {
       this.isToggled.set(false)
       return;
     }
+    console.log(value)
 
     this.q$.next(value);
 
@@ -88,5 +94,30 @@ export class Navbar implements OnInit{
 
   }
 
-  protected readonly decodeHtml = decodeHtml;
+  onArrowKeys(event: KeyboardEvent) {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      let selected = this.selectedIndex()
+      let currIndex = selected < this.queryResults().length - 1 ? selected + 1 : 0;
+      this.selectedIndex.set(currIndex);
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      let selected = this.selectedIndex()
+      let currIndex = selected > 0 ? selected - 1 : this.queryResults().length - 1;
+      this.selectedIndex.set(currIndex);
+    }
+    if (event.key === "Enter" && this.selectedIndex() !== -1) {
+      event.preventDefault();
+      this.onResultClick(this.queryResults()[this.selectedIndex()].id.videoId);
+      this.isToggled.set(false)
+
+    }
+  }
+
+  onResultClick(vidId: string) {
+    this.router.navigate(['/video', vidId])
+  }
+
 }

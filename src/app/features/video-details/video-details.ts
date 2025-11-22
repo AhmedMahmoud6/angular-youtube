@@ -212,48 +212,50 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
   constructor() {
 
 
-        this.router.events
-          .pipe(filter(event => event instanceof NavigationEnd))
-          .subscribe(() => {
-            const id = this.route.snapshot.paramMap.get('id');
-            this.sharedObserver?.unobserveElement(this.commentsSentinel);
-            this.sharedObserver?.unobserveElement(this.suggestedSentinel);
-            this.sharedObserver?.disconnect();
 
-            // this.video().
-            this.comments.set([]);
-            this.suggestedVideos.set([]);
+      console.log("test")
+      console.log(this.youtube.isVideoFromHome());
+      this.router.events
+        .pipe(filter(event => event instanceof NavigationEnd))
+        .subscribe(() => {
+          const id = this.route.snapshot.paramMap.get('id');
+          this.sharedObserver?.unobserveElement(this.commentsSentinel);
+          this.sharedObserver?.unobserveElement(this.suggestedSentinel);
+          this.sharedObserver?.disconnect();
 
-            this.sharedObserver?.observeElement(this.commentsSentinel!, {
-              loadWhat: 'comments',
-              nextPageToken: this.nextPageToken,
-              youtubeService: this.youtube,
-              error: this.error,
-              videos: this.video,
-              comments: this.comments,
-              videoId: id,
-              videoTags: this.videoTag,
-              isLoading: this.isLoading,
+          // this.video().
+          this.comments.set([]);
+          this.suggestedVideos.set([]);
 
-            })
+          this.sharedObserver?.observeElement(this.commentsSentinel!, {
+            loadWhat: 'comments',
+            nextPageToken: this.nextPageToken,
+            youtubeService: this.youtube,
+            error: this.error,
+            videos: this.video,
+            comments: this.comments,
+            videoId: id,
+            videoTags: this.videoTag,
+            isLoading: this.isLoading,
 
-            this.sharedObserver?.observeElement(this.suggestedSentinel!, {
-              loadWhat: 'suggested',
-              youtubeService: this.youtube,
-              videoTags: this.videoTag,
-              suggestedVideos: this.suggestedVideos,
-              suggestedNextPageToken: this.suggestedNextPageToken,
-              suggestedIsLoading: this.suggestedIsLoading,
-              suggestedError: this.suggestedError,
-              videoCategoryId: this.videoCategoryId,
-            })
-            //
-            // console.log("new suggested",this.suggestedVideos())
-            // console.log("new comments",this.comments())
-            // console.log('New video id:', id);
-            // console.log('New videoCategory id:', this.videoCategoryId);
-          });
+          })
 
+          this.sharedObserver?.observeElement(this.suggestedSentinel!, {
+            loadWhat: 'suggested',
+            youtubeService: this.youtube,
+            videoTags: this.videoTag,
+            suggestedVideos: this.suggestedVideos,
+            suggestedNextPageToken: this.suggestedNextPageToken,
+            suggestedIsLoading: this.suggestedIsLoading,
+            suggestedError: this.suggestedError,
+            videoCategoryId: this.videoCategoryId,
+          })
+          //
+          // console.log("new suggested",this.suggestedVideos())
+          // console.log("new comments",this.comments())
+          // console.log('New video id:', id);
+          // console.log('New videoCategory id:', this.videoCategoryId);
+        });
 
 
 
@@ -267,12 +269,6 @@ export class VideoDetails implements AfterViewInit, OnDestroy{
         // console.log(this.videoCategoryId!());
         // console.log(this.comments());
 
-      // testing
-      if (this.isFirstTime()) {
-        this.isFirstTime.set(false);
-        // this.suggestedVideos.set(filteredSuggest);
-
-      }
 
     });
   }

@@ -75,6 +75,8 @@
         padding: 10px;
         border-radius: 10px;
 
+
+
         li {
           display: flex;
           justify-content: space-between;
@@ -110,6 +112,11 @@
             }
           }
         }
+
+        li.selected {
+          background-color: var(--search-background-hover)
+        }
+
       }
 
 

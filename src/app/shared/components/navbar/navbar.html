@@ -24,6 +24,7 @@
         type="text"
         placeholder="Search"
         (input)="onKeyDown($event)"
+        (keydown)="onArrowKeys($event)"
         (click)="onInputClick()"
       >
 
@@ -32,7 +33,11 @@
       </div>
 
       <ul class="search-list" *ngIf="isToggled()">
-        <li *ngFor="let result of queryResults()">
+        <li
+          *ngFor="let result of queryResults(); let i = index"
+          (click)="onResultClick(result.id.videoId)"
+          [class.selected]="i === selectedIndex()"
+        >
           <div class="list-left">
             <fa-icon [icon]="faMagnifyingGlass"></fa-icon>
             <p>{{ decodeHtml(result.snippet.title) }}</p>

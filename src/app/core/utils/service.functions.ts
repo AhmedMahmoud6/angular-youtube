@@ -340,11 +340,13 @@ export function createSharedObserver(ngZone: NgZone, options: IntersectionObserv
     observer,
 
     observeElement(el: Element, meta: any) {
+      if(!el) return;
       elementState.set(el, meta);
       observer.observe(el);
     },
 
     unobserveElement(el: Element) {
+      if(!el) return;
       elementState.delete(el);
       observer.unobserve(el);
     },
