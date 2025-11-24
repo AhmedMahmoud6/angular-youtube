@@ -9,7 +9,7 @@
   <div class="sentinel" *ngIf="isOnline()" #sentinel></div>
 
 <ng-container *ngIf="error()">
-  <h1 class="error-h1">{{error()}}</h1>
+  <h1 class="error-h1">Failed To Load Videos</h1>
 </ng-container>
 
 <ng-container *ngIf="!isOnline()">
