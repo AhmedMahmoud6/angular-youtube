@@ -32,8 +32,6 @@ export class Comment {
   protected readonly faChevronDown = faChevronDown;
 
   private youtube: YoutubeService = inject(YoutubeService);
-  nextPageToken: WritableSignal<string | null | undefined> = signal<string | null | undefined>(undefined);
-  isLoading: WritableSignal<boolean> = signal(false);
   error: WritableSignal<string | null> = signal<string | null>(null);
   loadingMap: WritableSignal<Map<string, boolean>> = signal(new Map());
   nextPageTokenMap: WritableSignal<Map<string, string | null>> = signal(new Map());
@@ -42,7 +40,6 @@ export class Comment {
 
   protected expanded = signal(new Set<string>());
   comments: InputSignal<Comments[]> = input<Comments[]>([]);
-  replies: WritableSignal<SingleComment[]> = signal<SingleComment[]>([]);
   repliesCache: WritableSignal<Map<string, SingleComment[]>> = signal<Map<string, SingleComment[]>>(new Map<string, SingleComment[]>())
 
   toggleReplies (commentId: string) {
@@ -74,7 +71,6 @@ export class Comment {
 
   constructor() {
     effect(() => {
-      // console.log(this.repliesCache())
     });
   }
 }

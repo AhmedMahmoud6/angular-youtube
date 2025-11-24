@@ -6,4 +6,12 @@
       <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
     </div>
   </ng-container>
-  <div class="sentinel" #sentinel></div>
+  <div class="sentinel" *ngIf="isOnline()" #sentinel></div>
+
+<ng-container *ngIf="error()">
+  <h1 class="error-h1">{{error()}}</h1>
+</ng-container>
+
+<ng-container *ngIf="!isOnline()">
+  <h1 class="error-h1">You're Offline, Check your Internet And Try Again</h1>
+</ng-container>

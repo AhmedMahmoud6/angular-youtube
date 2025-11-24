@@ -40,6 +40,7 @@ export class Search implements OnInit, AfterViewInit , OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  isOnline = signal(window.navigator.onLine);
 
   ngOnInit() {
     this.route.queryParamMap.pipe(
@@ -128,6 +129,17 @@ export class Search implements OnInit, AfterViewInit , OnDestroy {
       this.videos.set([...this.videos(), ...(res.items ?? [])]);
       this.nextPageToken.set(res.nextPageToken ?? null);
       this.isLoading.set(false);
+    });
+  }
+
+
+  constructor() {
+    window.addEventListener('online', () => {
+      this.isOnline.set(true);
+    });
+
+    window.addEventListener('offline', () => {
+      this.isOnline.set(false);
     });
   }
 

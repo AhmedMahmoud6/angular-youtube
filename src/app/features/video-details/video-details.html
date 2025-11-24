@@ -3,7 +3,7 @@
     <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
   </div>
 </ng-container>
-<div class="current-video" *ngIf="video() as v">
+<div class="current-video" *ngIf="video() as v" >
 <!--  <p>video title is {{v.snippet.title}}</p>-->
   <youtube-player
     *ngIf="v"
@@ -15,6 +15,8 @@
   >
   </youtube-player>
 </div>
+
+
 
 <div class="video-details" *ngIf="video() as v">
 
@@ -83,7 +85,13 @@
             <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
           </div>
         </ng-container>
-        <div #commentsSection class="comments-sentinel" aria-hidden="true"></div>
+
+        <div class="show-more-comments reply-btn"
+             [class.show-btn]="commentsCounter() > 0"
+             [class.hide-btn]="!nextPageToken()"
+             (click)="onCommentsBtnClick()"
+        >Show More Comments</div>
+        <div #commentsSection class="comments-sentinel" [class.hide-sentinel]="commentsCounter() > 0" aria-hidden="true"></div>
       </div>
     </ng-container>
 
@@ -100,8 +108,21 @@
         <mat-progress-spinner mode="indeterminate" diameter="50" strokeWidth="4" ></mat-progress-spinner>
       </div>
     </ng-container>
-    <div #suggestedSection class="suggested-sentinel" aria-hidden="true"></div>
+    <ng-container *ngIf="suggestedError()">
+      <h1 class="error-h1">{{ suggestedError() }}</h1>
+    </ng-container>
+
+    <div class="show-more-suggestions reply-btn"
+         [class.show-btn]="suggestedCounter() > 0"
+         [class.hide-btn]="!suggestedNextPageToken()"
+         (click)="onSuggestionsBtnClick()"
+    >Show More Suggestions</div>
+    <div #suggestedSection class="suggested-sentinel" [class.hide-sentinel]="suggestedCounter() > 0" aria-hidden="true"></div>
 
   </div>
 
 </div>
+
+<ng-container *ngIf="!isOnline()">
+  <h1 class="error-h1">You're Offline, Check your Internet And Try Again</h1>
+</ng-container>

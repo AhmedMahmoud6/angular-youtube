@@ -26,3 +26,7 @@
   </div>
 </ng-container>
 <div class="search-sentinel" #searchSentinel aria-hidden="true"></div>
+
+<ng-container *ngIf="!isOnline()">
+  <h1 class="error-h1">You're Offline, Check your Internet And Try Again</h1>
+</ng-container>

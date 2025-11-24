@@ -13,13 +13,17 @@ export function loadMore(
   error? :WritableSignal<string | null>,
   videos? : WritableSignal<Video[]>,
   comments? : WritableSignal<Comments[]>,
-  videoId? : string,
+  videoId? : string | null,
   videoTags?: string[],
   suggestedVideos?: WritableSignal<SuggestedVideo[]>,
   suggestedNextPageToken?: WritableSignal<string | null | undefined>,
   suggestedIsLoading?: WritableSignal<boolean>,
   suggestedError?: WritableSignal<string | null>,
   videoCategoryId? : WritableSignal<string> | undefined,
+  commentsCounter?: WritableSignal<number>,
+  suggestedCounter?: WritableSignal<number>,
+  commentsComplete?: WritableSignal<boolean>,
+  suggestedComplete?: WritableSignal<boolean>,
 
 
 ) {
@@ -77,14 +81,11 @@ export function loadMore(
       next: res => {
         const newItems = res.items ?? [];
         comments?.set([...comments!(), ...newItems]);
-
-
-
         nextPageToken.set(res.nextPageToken ?? null);
-
+        commentsCounter?.set(commentsCounter() + 1);
 
         if (!res.nextPageToken) {
-          // observer?.disconnect();
+          commentsComplete?.set(true);
         }
       },
       error: err => {
@@ -119,8 +120,6 @@ export function loadMore(
 
     const token = suggestedNextPageToken!() ?? undefined;
 
-    console.log("Inside suggested")
-    // console.log("Inside suggested videoCatgeory", videoCategoryId!())
 
     youtubeService.getVideoSuggestions(token, videoTags).pipe(take(1),
       switchMap(res =>{
@@ -138,19 +137,18 @@ export function loadMore(
         next: res => {
           const newItems = res.items;
           suggestedVideos?.set([...suggestedVideos(), ...newItems]);
-
+          suggestedCounter?.set(suggestedCounter() + 1);
           suggestedNextPageToken?.set(res.nextPageToken);
 
 
 
           if (!res.nextPageToken) {
-            // disconnect with the observer
-            // observer?.disconnect()
+            suggestedComplete?.set(true);
           }
         },
         error: err => {
-          console.error('loadMore: comments error', err);
-          suggestedError?.set("Failed To Load Comments");
+          console.error('loadMore: suggestedVids error', err);
+          suggestedError?.set("Failed To Load Suggested Videos");
           suggestedIsLoading?.set(false);
         },
         complete: () => {
@@ -304,6 +302,10 @@ export function createSharedObserver(ngZone: NgZone, options: IntersectionObserv
     suggestedIsLoading?: WritableSignal<boolean>,
     suggestedError?: WritableSignal<string | null>,
     videoCategoryId?: WritableSignal<string> | undefined ,
+    commentsCounter?: WritableSignal<number>,
+    suggestedCounter?: WritableSignal<number>,
+    commentsComplete?: WritableSignal<boolean>,
+    suggestedComplete?: WritableSignal<boolean>,
   }>();
 
   const observer = new IntersectionObserver(entries => {
@@ -330,6 +332,10 @@ export function createSharedObserver(ngZone: NgZone, options: IntersectionObserv
           state.suggestedIsLoading,
           state.suggestedError,
           state.videoCategoryId,
+          state.commentsCounter,
+          state.suggestedCounter,
+          state.commentsComplete,
+          state.suggestedComplete,
         );
       });
     }
