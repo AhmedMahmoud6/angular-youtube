@@ -45,7 +45,8 @@
     .search-parent {
       @include mixins.center-flex();
       position: relative;
-      width: 640px;
+      width: clamp(150px, 50vw, 640px);
+      flex-shrink: 1;
       height: 40px;
       outline: 1px solid var(--outline);
       border-radius: 20px;
@@ -91,9 +92,11 @@
             align-items: center;
             gap: 10px;
             pointer-events: none;
+            min-width: 0;
+            margin-right: 20px;
             p {
-              width: 350px;
-              text-wrap: nowrap;
+              width: clamp(100px,350px,350px);
+              white-space: nowrap;
               text-overflow: ellipsis;
               overflow: hidden;
             }
@@ -200,6 +203,33 @@
         height: 100%;
         border-radius: 50%;
       }
+    }
+  }
+}
+
+@media (min-width: 320px) and (max-width: 1200px) {
+  .nav {
+    .nav-right-side {
+      .create, .notification {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (min-width: 320px) and (max-width: 700px) {
+  .nav {
+    flex-direction: column;
+    .nav-right-side,
+    .nav-center .voice,
+    .nav-left-side .menu
+    {
+      display: none;
+
+    }
+
+    .search-parent, .nav-center {
+      width: 100% !important;
     }
   }
 }

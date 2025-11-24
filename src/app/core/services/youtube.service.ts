@@ -1,7 +1,7 @@
-import {inject, Injectable, signal, WritableSignal} from '@angular/core';
+import { Injectable, signal, WritableSignal} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Comments, SingleComment, SingleReply, SuggestedVideo, Video} from '../models/video';
+import {Comments, SingleComment, SuggestedVideo, Video} from '../models/video';
 import {Observable, throwError} from "rxjs";
 
 @Injectable({
@@ -19,7 +19,6 @@ export class YoutubeService {
     part: 'snippet,statistics,contentDetails',
     chart: 'mostPopular',
     regionCode: 'EG',
-    // maxResults: '20',
   }
 
   private videoParams = {
@@ -42,8 +41,7 @@ export class YoutubeService {
   }
 
   getSuggestedVideos(pageToken?: string, videoCategoryId?: string | undefined): Observable<{ items: SuggestedVideo[]; nextPageToken?: string }> {
-    // const category = videoCategoryId!();
-    // this.homeVideoCategoryId?.set(undefined);
+
 
     const paramObj : Record<string, string> = {
       ...this.params,
@@ -95,7 +93,7 @@ export class YoutubeService {
     return this.http.get<{items: SingleComment[]; nextPageToken: string}>(`${this.apiUrl}/comments?key=${this.apiKey}`, { params: params })
   }
 
-  getVideoSuggestions(pageToken: string | undefined, tags: string[] | undefined, videoCategoryId?: string,) {
+  getVideoSuggestions(pageToken: string | undefined, tags: string[] | undefined) {
     const q = tags?.join(" ");
 
     const paramObj : Record<string, string> = {
