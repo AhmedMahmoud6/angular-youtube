@@ -1,59 +1,42 @@
-# Youtube
+# angular-youtube
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.4.
+A simple YouTube-style Angular application with three main pages: **Home**, **Search**, and **Video**.
 
-## Development server
+---
 
-To start a local development server, run:
+## Live Demo
+- [Click Here](https://ahmedmahmoud6.github.io/angular-youtube/)
 
-```bash
-ng serve
-```
+---
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 📌 Pages Overview
 
-## Code scaffolding
+### 🏠 Home Page
+- Displays a list of videos.
+- Supports **infinite scroll** to load more videos as you scroll.
+- **Hovering** on a video card automatically **plays a preview**.
+- Clicking a video routes the user to the Video Page.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 🔍 Search Page
+- Allows users to search for videos by **keyword or topic**.
+- Shows a list of videos matching the searched term.
+- Clicking a video navigates to the Video Page.
 
-```bash
-ng generate component component-name
-```
+### 🎬 Video Page
+- Shows the **embedded video player** for the selected video.
+- Includes a **comments section**:
+  - Displays comments.
+  - Each comment includes its **replies**.
+- Includes a **suggested videos** section.
+- Each suggested video is clickable and routes to a new Video Page for that video.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 📱 Responsiveness
 
-```bash
-ng generate --help
-```
+- The entire application is **fully responsive**.
+- Layout adapts smoothly to **mobile**, **tablet**, and **desktop** screen sizes.
+- Video cards resize based on screen width.
+- The Video Page rearranges:
+  - Suggested videos move below the player on smaller screens.
+  - Comments remain readable and well-structured on all devices.
+- Hover previews are disabled or adjusted on touch devices for better usability.
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
